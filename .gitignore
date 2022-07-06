@@ -157,3 +157,4 @@ eurostat_py_doc*
 src/wto/*
 *.csv
 cred*
+*.ini
