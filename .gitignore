@@ -159,6 +159,7 @@ src/wto/*
 cred*
 *.ini
 
+# LATEX
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
@@ -172,3 +173,11 @@ cred*
 *.cb
 *.cb2
 .*.lb
+
+## Build tool auxiliary files:
+*.fdb_latexmk
+*.synctex
+*.synctex(busy)
+*.synctex.gz
+*.synctex.gz(busy)
+*.pdfsync
