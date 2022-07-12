@@ -178,7 +178,7 @@ def load_filtered_data(table, save=False, verbose=1, force_reload=False, sorted=
             return df
         else:
             if sorted:
-                df_out = df.groupby(params["columns"][:-2],as_index=False).sum().sort_values(params["columns"][-1],ascending=False).reset_index(drop=True)
+                df_out = df.groupby(params["columns"][:-2],as_index=False).sum().sort_values(params["columns"][-2],ascending=False).reset_index(drop=True)
             else:
                 df_out = df.groupby(params["columns"][:-2],as_index=False).sum().reset_index(drop=True)
             str_save = f"./data-samples/manual/{table}/{table}__{get_params_str_hash(params)}.parquet"
@@ -366,7 +366,7 @@ def calc_metrics(G,y="2021"):
     
     return pd.DataFrame(metrics)
 
-def makeGraph(tab_edges, tab_nodes=None, pos_ini=None, weight_flag=False, criterio="VALUE_IN_EUROS", threshold=0.001, compute_layout=False, lay_dist=5):
+def makeGraph(tab_edges, tab_nodes=None, pos_ini=None, weight_flag=False, criterio="VALUE_IN_EUROS", compute_metrics=True, compute_layout=False, lay_dist=5):
     
     G = nx.DiGraph()
     if tab_nodes is not None:
@@ -388,12 +388,16 @@ def makeGraph(tab_edges, tab_nodes=None, pos_ini=None, weight_flag=False, criter
 
     G.add_weighted_edges_from(edges)
 
-    # Calcolo le metriche
-    MetricG = calc_metrics(G, y=tab_edges.columns.name)
-    MetricG = MetricG.merge(tab_edges.groupby(["country_from"])[criterio].sum().rename("out_weight_abs"),left_index=True,right_index=True,how="left")\
-                     .merge(tab_edges.groupby(["country_to"])[criterio].sum().rename("in_weight_abs"),left_index=True,right_index=True,how="left").fillna(0)
-    MetricG.index.name = "country"
+    MetricG = None
+    coord = None
 
+    # Calcolo le metriche
+    if compute_metrics:
+        MetricG = calc_metrics(G, y=tab_edges.columns.name)
+        MetricG = MetricG.merge(tab_edges.groupby(["country_from"])[criterio].sum().rename("out_weight_abs"),left_index=True,right_index=True,how="left")\
+                        .merge(tab_edges.groupby(["country_to"])[criterio].sum().rename("in_weight_abs"),left_index=True,right_index=True,how="left").fillna(0)
+        MetricG.index.name = "country"
+    
     if compute_layout:
         if pos_ini is None:
             pos_ini = {}
@@ -402,30 +406,11 @@ def makeGraph(tab_edges, tab_nodes=None, pos_ini=None, weight_flag=False, criter
                 x = random.uniform(0, 1000)
                 y = random.uniform(0, 1000)
                 pos_ini[node] = np.array([x,y])
-        coord = nx.spring_layout(G,k=lay_dist/math.sqrt(G.order()),iterations=500)
-        return coord, MetricG, G
-    else:
-        return None, MetricG, G
-    
-def node_metrics_ts(metrics_df, node, prod=None):
-    if prod is None:
-        prod = "TO"
-    if node != "world":
-        return metrics_df[(metrics_df.country == node)&(metrics_df["prod"]==prod)].reset_index(drop=True).copy()
-    else:
-        fmdf_gr = metrics_df.groupby(["year","month","prod"],as_index=False).sum()
-        return fmdf_gr[fmdf_gr["prod"] == prod].reset_index(drop=True).copy()
+        coord = nx.spring_layout(G,weight=None,k=lay_dist/math.sqrt(G.order()),iterations=1000)
 
-# def node_metrics_ts(metrics_dict, node, prod=None):
-#     node_rows = []
-#     for k in metrics_dict:
-#         ym, _, p = k.split("_")
-#         if prod == None:
-#             prod = p
-#         if prod == p:
-#             node_rows.append(pd.concat([pd.Series(ym,index=["date"],name="IT"),metrics_dict[k].loc["IT"]]))
-#     return pd.DataFrame(node_rows).set_index("date")
-#     # return node_rows
+    return coord, MetricG, G
+    
+
     
 def load_population_df(y_from=2000,y_to=2021):
     if not os.path.exists("./data-samples/population/df_pop.csv"):
@@ -451,8 +436,28 @@ def get_cat_name(table,code,files_dict=files_dict):
         name = nom[nom["code"]==code].iloc[0]["name"]
         return name
     except:
-        print("Index not existing")
+        # print("Index not existing")
         return "Unknown"
+
+def node_metrics_ts(metrics_df, node, prod=None):
+    if prod is None:
+        prod = "TO"
+    if node != "world":
+        return metrics_df[(metrics_df.country == node)&(metrics_df["prod"]==prod)].reset_index(drop=True).copy()
+    else:
+        fmdf_gr = metrics_df.groupby(["year","month","prod"],as_index=False).sum()
+        return fmdf_gr[fmdf_gr["prod"] == prod].reset_index(drop=True).copy()
+
+# def node_metrics_ts(metrics_dict, node, prod=None):
+#     node_rows = []
+#     for k in metrics_dict:
+#         ym, _, p = k.split("_")
+#         if prod == None:
+#             prod = p
+#         if prod == p:
+#             node_rows.append(pd.concat([pd.Series(ym,index=["date"],name="IT"),metrics_dict[k].loc["IT"]]))
+#     return pd.DataFrame(node_rows).set_index("date")
+#     # return node_rows
 
 def plot_bar_metr(metrics_df,country="IT",metr="density",log=False):
     ita_in = metrics_df[(metrics_df.country == country)&(metrics_df["prod"] != "TO")]
@@ -460,22 +465,25 @@ def plot_bar_metr(metrics_df,country="IT",metr="density",log=False):
     ita_pivot = ita_in[["year","month","prod",metr]].reset_index(drop=True).pivot(index=["year","month"], columns=["prod"])
     if not log:
         ita_pivot.mean(axis=0).reset_index(level=0,drop=True).rename({i:i+" "+get_cat_name("full",i)[:30] for _,i in ita_pivot.columns},axis=0)\
-                 .sort_values(ascending=False).plot.bar(figsize=(20,8))
+                 .sort_values(ascending=False).iloc[:25].plot.bar(figsize=(20,8))
         plt.ylabel(metr)
     else:
         np.log10(ita_pivot.mean(axis=0)).reset_index(level=0,drop=True).rename({i:i+" "+get_cat_name("full",i)[:30] for _,i in ita_pivot.columns},axis=0)\
-                 .sort_values(ascending=False).plot.bar(figsize=(20,8))
+                 .sort_values(ascending=False).iloc[:25].plot.bar(figsize=(20,8))
         plt.ylabel("log "+metr)
     # plt.xticks(rotation=45, rotation_mode="anchor", position=(0.1,-0.11))
     plt.axhline(y=0,color="k",linewidth=0.5)
-    plt.title("Mean "+metr+" across time for "+country)
+    if country in ["density","density_adj"]:
+        plt.title("Mean "+ metr +" across time for "+country)
+    else:
+        plt.title("Mean "+ metr +" across time")
     # plt.show()
     
 def plot_cat_ts(metrics_df, prod=None, metr="density", country="world", moving_avg=None, log=False):
     df = node_metrics_ts(metrics_df,node=country,prod=prod)
     df["date"] = df.year + df.month
     df.set_index("date",inplace=True)
-    title = metr.capitalize() + " of " + country + " for " + get_cat_name("full",prod) + " from 2001 to 2021"
+    title = metr + " of " + country + " for " + get_cat_name("full",prod) + " from 2001 to 2021"
     if moving_avg is None:
         if log:
             np.log10(df[[metr]]).plot(figsize=(20,8),label=metr)
@@ -492,18 +500,21 @@ def plot_cat_ts(metrics_df, prod=None, metr="density", country="world", moving_a
         df.MA.plot(figsize=(20,8),label=metr)
     plt.legend()
     plt.ylabel(metr)
-    plt.grid()
     plt.title(title,fontsize=14)
+    # plt.grid()
+
 
 def plot_power_law(metr_df,metric):
-    y,x = np.histogram(metr_df[metric],bins=100,density=True)
+    y, x = np.histogram(metr_df[metric],bins=200,density=True)
     x = np.array([np.mean([x[i],x[i+1]]) for i in range(len(x)-1)])
     x = x[y > 0]
     y = y[y > 0]
     x_log = np.log10(x)
     y_log = np.log10(y)
     results = powerlaw.Fit(metr_df[metric].to_numpy(),xmin=1.)
-    l = np.linspace(3,np.max(x))
+    print("Power law degree is:", results.power_law.alpha)
+    ## Graph
+    l = np.linspace(np.min(x),np.max(x))
     fig, (ax1,ax2) = plt.subplots(1,2,figsize=(20,8))
     # ax1
     ax1.plot(l,l**(-results.power_law.alpha),color="r",label=f"powerlaw, gamma = {results.power_law.alpha:.4}")
@@ -512,12 +523,12 @@ def plot_power_law(metr_df,metric):
     ax1.set_ylabel("P("+metric+")")
     ax1.legend()
     # ax2
-    l = np.linspace(0,np.max(x_log))
+    l = np.linspace(np.min(x_log),np.max(x_log))
     ax2.plot(l,l*(-results.power_law.alpha),color="r",label=f"powerlaw, gamma = {results.power_law.alpha:.4}")
     ax2.scatter(x_log,y_log,label=metric+" distribution")
     ax2.set_xlabel("log("+metric+")")
     ax2.set_ylabel("log( P("+metric+") )")
     ax2.legend()
 
-    plt.suptitle("Power Law fit of "+metric+" in 01/2021",fontsize=16)
+    plt.suptitle("Power Law fit of "+metric,fontsize=16)
     plt.show()
