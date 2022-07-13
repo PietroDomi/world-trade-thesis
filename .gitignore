@@ -160,6 +160,8 @@ cred*
 *.ini
 
 # LATEX
+tex/*.pdf
+build/
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
@@ -181,3 +183,6 @@ cred*
 *.synctex.gz
 *.synctex.gz(busy)
 *.pdfsync
+
+## Texmaker session
+*.tks

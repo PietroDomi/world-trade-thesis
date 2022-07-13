@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass{report}
 \usepackage[english]{babel}
 
 % Set page size and margins
@@ -11,18 +11,22 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage[colorlinks=false, allcolors=blue]{hyperref}
+\usepackage{biblatex}
 
 % Custom operators
-\DeclareMathOperator{\E}{\mathbb{E}}
-\newcommand{\cal}[1]{\mathcal{#1}}
-\newcommand{\fk}[1]{\mathfrak{#1}}
-\newcommand{\bf}[1]{\mathbf{#1}}
-\newcommand{\kl}[2]{KL \left( #1\,||\,#2 \right)}
-\newtheorem{definition}{Definition}[section]
+%\DeclareMathOperator{\E}{\mathbb{E}}
+%\DeclareMathOperator{\cal}[1]{\mathcal{#1}}
+%\DeclareMathOperator{\fk}[1]{\mathfrak{#1}}
+%\DeclareMathOperator{\bf}[1]{\mathbf{#1}}
+%\DeclareMathOperator{\kl}[2]{KL \left( #1\,||\,#2 \right)}
+%\newtheorem{definition}{Definition}[section]
 
 \title{World Trade Thesis}
 \author{Pietro Dominietto}
 \date{October 2022}
+
+\bibliography{references}
+
 
 \begin{document}
 \maketitle
@@ -36,6 +40,16 @@ Abstract
 
 \pagebreak
 
-\section{Introduction}
+% Introduction chapter
+\input{ch1intro}
+% Data and Graphs chapter
+\input{ch2data}
+% Methods and Analysis chapter
+\input{ch3analysis}
+% Scenarios and insights
+\input{ch4scenarios}
+
+%\bibliographystyle{alpha}
+\printbibliography
 
 \end{document}
