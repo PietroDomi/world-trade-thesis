@@ -532,3 +532,5 @@ def plot_power_law(metr_df,metric):
 
     plt.suptitle("Power Law fit of "+metric,fontsize=16)
     plt.show()
+
+print("Functions loaded!")
