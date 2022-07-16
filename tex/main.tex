@@ -1,17 +1,29 @@
-\documentclass{report}
-\usepackage[english]{babel}
+\documentclass[a4paper,12pt]{report}
+% \usepackage[english]{babel}
 
 % Set page size and margins
-% Replace `letterpaper' with`a4paper' for UK/EU standard size
-\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=2.5cm,right=2.5cm,marginparwidth=1.75cm]{geometry}
 
 % Useful packages
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
-\usepackage[colorlinks=false, allcolors=blue]{hyperref}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=false,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={World Trade Thesis},
+    pdfpagemode=FullScreen,
+    }
+    
+% \urlstyle{same}
 \usepackage{biblatex}
+\usepackage{fontspec}
+% \defaultfontfeatures{Mapping=tex-text}
+\setmainfont{Verdana}
 
 % Custom operators
 %\DeclareMathOperator{\E}{\mathbb{E}}
@@ -49,7 +61,7 @@ Abstract
 % Scenarios and insights
 \input{ch4scenarios}
 
-%\bibliographystyle{alpha}
+% \bibliographystyle{alpha}
 \printbibliography
 
 \end{document}
