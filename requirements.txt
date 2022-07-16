@@ -1,3 +1,5 @@
 powerlaw
-# eurostat
-# networkx
+networkx
+numpy
+pandas
+tqdm
