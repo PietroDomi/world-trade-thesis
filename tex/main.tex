@@ -25,6 +25,10 @@
 % \defaultfontfeatures{Mapping=tex-text}
 \setmainfont{Verdana}
 
+\usepackage{csvsimple}
+
+% \input{tex/cpa21_csv}
+
 % Custom operators
 %\DeclareMathOperator{\E}{\mathbb{E}}
 %\DeclareMathOperator{\cal}[1]{\mathcal{#1}}
@@ -53,15 +57,18 @@ Abstract
 \pagebreak
 
 % Introduction chapter
-\input{ch1intro}
+\input{tex/ch1intro}
 % Data and Graphs chapter
-\input{ch2data}
+\input{tex/ch2data}
 % Methods and Analysis chapter
-\input{ch3analysis}
+\input{tex/ch3analysis}
 % Scenarios and insights
-\input{ch4scenarios}
+\input{tex/ch4scenarios}
 
 % \bibliographystyle{alpha}
 \printbibliography
+
+\appendix
+\input{tex/appendix}
 
 \end{document}
