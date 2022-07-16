@@ -1,23 +1,25 @@
-import hashlib, random, math, os, pickle, powerlaw #,eurostat
+import hashlib, random, math, os, powerlaw
 import pandas as pd
 import numpy as np
 import networkx as nx
 from tqdm.notebook import tqdm
-from networkx.readwrite import json_graph
-from networkx.classes.function import degree
 import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
-from scipy.optimize import curve_fit
-from matplotlib import cm
 
 full_columns = ['PRODUCT_CPA2_1', 'DECLARANT_ISO', 'PARTNER_ISO', 'FLOW', 'PERIOD', 'VALUE_IN_EUROS', 'QUANTITY_IN_KG']
-full_types = {'PRODUCT_CPA2_1':str, 'DECLARANT_ISO':str, 'PARTNER_ISO':str, 'FLOW':int, 'PERIOD':str, 'VALUE_IN_EUROS':int, 'QUANTITY_IN_KG':int}
+full_types = {'PRODUCT_CPA2_1':str, 'DECLARANT_ISO':str, 'PARTNER_ISO':str, 'FLOW':int, 'PERIOD':str, 'VALUE_IN_EUROS':np.int64, 'QUANTITY_IN_KG':np.int64}
+
+wto_columns = ['PRODUCT_CPA2_1', 'DECLARANT_ISO', 'PARTNER_ISO', 'FLOW', 'PERIOD', 'VALUE_IN_EUROS', 'QUANTITY_IN_KG']
+wto_types = {'PRODUCT_CPA2_1':str, 'DECLARANT_ISO':str, 'PARTNER_ISO':str, 'FLOW':int, 'PERIOD':str, 'VALUE_IN_EUROS':np.int64, 'QUANTITY_IN_KG':np.int64}
 
 tr_columns = ['PRODUCT_NSTR', 'DECLARANT_ISO', 'PARTNER_ISO', 'FLOW', 'PERIOD', 'TRANSPORT_MODE', 'VALUE_IN_EUROS']
-tr_types = {'PRODUCT_NSTR':str, 'DECLARANT_ISO':str, 'PARTNER_ISO':str, 'FLOW':int, 'PERIOD':str, 'TRANSPORT_MODE':int, 'VALUE_IN_EUROS':int}
+tr_types = {'PRODUCT_NSTR':str, 'DECLARANT_ISO':str, 'PARTNER_ISO':str, 'FLOW':int, 'PERIOD':str, 'TRANSPORT_MODE':int, 'VALUE_IN_EUROS':np.int64}
 
 tr_intra_columns = ['PRODUCT_NSTR', 'DECLARANT_ISO', 'PARTNER_ISO', 'FLOW', 'PERIOD', 'TRANSPORT_MODE', 'VALUE_IN_EUROS']
-tr_intra_types = {'PRODUCT_NSTR':str, 'DECLARANT_ISO':str, 'PARTNER_ISO':str, 'FLOW':int, 'PERIOD':str, 'TRANSPORT_MODE':int, 'VALUE_IN_EUROS':int}
+tr_intra_types = {'PRODUCT_NSTR':str, 'DECLARANT_ISO':str, 'PARTNER_ISO':str, 'FLOW':int, 'PERIOD':str, 'TRANSPORT_MODE':int, 'VALUE_IN_EUROS':np.int64}
+
+files_dict = {"full":pd.read_table("./data-samples/nomenclature/CPA2_1.txt",header=None).rename({0:"code",1:"name"},axis=1),
+                "tr":pd.read_table("./data-samples/nomenclature/NSTR.txt",header=None).rename({0:"code",1:"name"},axis=1),
+                "tr_intra_":pd.read_table("./data-samples/nomenclature/NSTR.txt",header=None).rename({0:"code",1:"name"},axis=1)}
 
 def combine_sources(df_com, df_wto):
     df_extra = df_wto[~(df_wto.DECLARANT_ISO.isin(df_com.DECLARANT_ISO.unique()))&~(df_wto.PARTNER_ISO.isin(df_com.DECLARANT_ISO.unique()))]
@@ -144,12 +146,17 @@ def load_filtered_data(table, save=False, verbose=1, force_reload=False, sorted=
             else:
                 if params["months"] is None:
                     df_y = pd.read_parquet(f"./data-samples/{table}/Years/{table}{y}52.parquet",columns=params["columns"])
+                    # print("df_y",(df_y.VALUE_IN_EUROS < 0).any())
                     if "group_by_prod_code" in params.keys() and params["group_by_prod_code"]:
                         df_y_filtered = group_by_prod_code(df_y[build_filters(df_y,params,table,str(y)+"52",prod_code_df)].astype(params["types"]),**params)
                     else:
-                        df_y_filtered = df_y[build_filters(df_y,params,table,str(y)+"52",prod_code_df)].astype(params["types"])
+                        df_y_f = df_y[build_filters(df_y,params,table,str(y)+"52",prod_code_df)]
+                        # print("df_y_f",(df_y_f.VALUE_IN_EUROS < 0).any())
+                        df_y_filtered = df_y_f.astype(params["types"])
+                    # print("df_y_filtered",(df_y_filtered.VALUE_IN_EUROS < 0).any())
                     df = pd.concat([df,df_y_filtered])
-                    del df_y, df_y_filtered
+                    # print("df",(df.VALUE_IN_EUROS < 0).any())
+                    del df_y, df_y_f, df_y_filtered
                 elif params["months"] == "all":
                     for m in tqdm(range(1,13),leave=False):
                         # if verbose:
@@ -177,25 +184,31 @@ def load_filtered_data(table, save=False, verbose=1, force_reload=False, sorted=
                 print("\n\tEmpty table")
             return df
         else:
+            # print("df",(df.VALUE_IN_EUROS < 0).any())
             if sorted:
                 df_out = df.groupby(params["columns"][:-2],as_index=False).sum().sort_values(params["columns"][-2],ascending=False).reset_index(drop=True)
             else:
-                df_out = df.groupby(params["columns"][:-2],as_index=False).sum().reset_index(drop=True)
+                df_group = df.groupby(params["columns"][:-2],as_index=False).sum()
+                # print("df_group",(df_group.VALUE_IN_EUROS < 0).any())
+                df_out = df_group.reset_index(drop=True)
+            # print("df_out",(df_out.VALUE_IN_EUROS < 0).any())
             str_save = f"./data-samples/manual/{table}/{table}__{get_params_str_hash(params)}.parquet"
+            # return df_out
+            df_final = df_out.astype(params["types"])
+            # print("df_final",(df_final.VALUE_IN_EUROS < 0).any())
+            # return df_y, df_y_filtered, df, df_out, df_final
             if save:
                 try:
                     df_out.to_parquet(str_save)
                     if verbose:
                         print(",\t Table loaded")
-                    return df_out.astype(params["types"]), str_save
                 except:
                     if verbose:
                         print("\nFailed saving",end="")
                         print(", Table loaded")
-                    return df_out.astype(params["types"]), str_save
+                return df_final
             else:
-                return df_out.astype(params["types"]), str_save
-                    
+                return df_final                    
 
 def combine_flows(df_to_combine, columns):
 
@@ -276,10 +289,10 @@ def extract_table_for_graph(df_in, y="2020", flow="all", criterio="VALUE_IN_EURO
     elif scale_by == 'population':
         if pop_df is None:
             pop_df, eu_iso = load_population_df()
-        y_ = "2020" if y == "2021" else y
-        df_out = df_to_scale.merge(pop_df[[y_]],left_on="country_to",right_on="iso2")
+        # y_ = "2020" if y == "2021" else y
+        df_out = df_to_scale.merge(pop_df[[y]],left_on="country_to",right_on="iso2")
         for crit in ["VALUE_IN_EUROS","QUANTITY_IN_KG"]:
-            df_out[crit+"_SCALED"] = df_out[crit] / df_out[y_]
+            df_out[crit+"_SCALED"] = df_out[crit] / df_out[y]
             df_out[crit+"_RESCALED"] = df_out[crit+"_SCALED"] / df_out[crit+"_SCALED"].sum()
             # df["VALUE_IN_EUROS_MM"] = MinMaxScaler().fit_transform(df["VALUE_IN_EUROS_SCALED"].to_numpy().reshape((-1,1)))[:,0]
         df_out.sort_values("VALUE_IN_EUROS_RESCALED",ascending=False,inplace=True)
@@ -360,7 +373,7 @@ def calc_metrics(G,y="2021"):
             # par, cov = curve_fit(f=power_law,xdata=x,ydata=y)
             # metrics[degree+"_exponent"] = par[1]
             # metrics[degree+"_coef"] = par[0]
-        results = powerlaw.Fit([metrics[degree][k] for k in metrics[degree]],verbose=False)
+        results = powerlaw.Fit([metrics[degree][k] for k in metrics[degree]],verbose=False,xmin=1.)
         metrics[degree+"_gamma"] = results.power_law.alpha
         metrics[degree+"_xmin"] = results.power_law.xmin
     
@@ -414,20 +427,25 @@ def makeGraph(tab_edges, tab_nodes=None, pos_ini=None, weight_flag=False, criter
     
 def load_population_df(y_from=2000,y_to=2021):
     if not os.path.exists("./data-samples/population/df_pop.csv"):
-        pop_un = pd.read_csv("./data-samples/population/population_un.csv",na_values="",keep_default_na=False)
-        code_to_iso3 = pd.read_csv("./data-samples/population/countryUN_to_iso3.csv",na_values="",keep_default_na=False)
-        iso3_to_iso2 = pd.read_csv("./data-samples/population/iso3_to_iso2.csv",na_values="",keep_default_na=False)
-        df_pop_merge = pop_un.merge(code_to_iso3[['LocID', 'ISO3_Code']],left_on='Country code',right_on='LocID').merge(iso3_to_iso2[['alpha-3','alpha-2']], left_on='ISO3_Code',right_on='alpha-3')
-        df_pop = df_pop_merge[df_pop_merge.columns[-1:].append(df_pop_merge.columns[7:-4])].astype({str(y):float for y in range(1950,2021)})
-        df_pop_clean = df_pop.rename({"alpha-2":"iso2"},axis=1)[["iso2"]+[str(y) for y in range(y_from,y_to)]].sort_values("iso2").reset_index(drop=True).fillna("NA") #, df_pop_merge
-        df_pop_clean.to_csv("./data-samples/population/df_pop.csv",index=False)
-        return df_pop_clean.set_index("iso2"), pd.read_table("./data-samples/population/eu_iso2.txt")["Alpha-2"]
+        ## OLD VERISON
+        # pop_un = pd.read_csv("./data-samples/population/population_un.csv",na_values="",keep_default_na=False)
+        # code_to_iso3 = pd.read_csv("./data-samples/population/countryUN_to_iso3.csv",na_values="",keep_default_na=False)
+        # iso3_to_iso2 = pd.read_csv("./data-samples/population/iso3_to_iso2.csv",na_values="",keep_default_na=False)
+        # df_pop_merge = pop_un.merge(code_to_iso3[['LocID', 'ISO3_Code']],left_on='LocID',right_on='LocID').merge(iso3_to_iso2[['alpha-3','alpha-2']], left_on='ISO3_Code',right_on='alpha-3')
+        # df_pop = df_pop_merge[df_pop_merge.columns[-1:].append(df_pop_merge.columns[7:-4])].astype({str(y):float for y in range(1950,2021)})
+        # df_pop_clean = df_pop.rename({"alpha-2":"iso2"},axis=1)[["iso2"]+[str(y) for y in range(y_from,y_to)]].sort_values("iso2").reset_index(drop=True).fillna("NA") #, df_pop_merge
+        # df_pop_clean.to_csv("./data-samples/population/df_pop.csv",index=False)
+        # return df_pop_clean.set_index("iso2"), pd.read_table("./data-samples/population/eu_iso2.txt")["Alpha-2"]
+
+        ## NEW VERSION
+        un_df = pd.read_csv("./data-samples/population/WPP2022_TotalPopulationBySex.csv",na_filter=False)
+        un_df_pivot = un_df[(un_df.ISO2_code != "")&(un_df.Time <= 2022)&(un_df.Variant == "Medium")]\
+                            .set_index(['LocID', 'ISO3_code', 'ISO2_code', 'SDMX_code','Location'])\
+                            [["Time","PopTotal"]].pivot(columns=["Time"]).droplevel(-2,axis=1).reset_index()
+        un_df_pivot.rename({"ISO3_code":"iso3","Location":"Country","ISO2_code":"iso2"},axis=1).to_csv("./data-samples/population/df_pop.csv")
+        return un_df_pivot.set_index("iso2"), pd.read_table("./data-samples/population/eu_iso2.txt")["Alpha-2"]
     else:
         return pd.read_csv("./data-samples/population/df_pop.csv",na_filter=False).set_index("iso2"), pd.read_table("./data-samples/population/eu_iso2.txt")["Alpha-2"]
-
-files_dict = {"full":pd.read_table("./data-samples/nomenclature/CPA2_1.txt",header=None).rename({0:"code",1:"name"},axis=1),
-                "tr":pd.read_table("./data-samples/nomenclature/NSTR.txt",header=None).rename({0:"code",1:"name"},axis=1),
-                "tr_intra_":pd.read_table("./data-samples/nomenclature/NSTR.txt",header=None).rename({0:"code",1:"name"},axis=1)}
 
 def get_cat_name(table,code,files_dict=files_dict):
     assert table in ["full","tr","tr_intra_"]
@@ -504,33 +522,37 @@ def plot_cat_ts(metrics_df, prod=None, metr="density", country="world", moving_a
     # plt.grid()
 
 
-def plot_power_law(metr_df,metric):
-    y, x = np.histogram(metr_df[metric],bins=200,density=True)
+def plot_power_law(metr_df, metric, discrete=False, pw_plot=False, xmin=0,bins=100):
+    y, x = np.histogram(metr_df[metric],bins=bins,density=True)
     x = np.array([np.mean([x[i],x[i+1]]) for i in range(len(x)-1)])
     x = x[y > 0]
     y = y[y > 0]
     x_log = np.log10(x)
     y_log = np.log10(y)
-    results = powerlaw.Fit(metr_df[metric].to_numpy(),xmin=1.)
+    results = powerlaw.Fit(metr_df[metric].to_numpy(),xmin=xmin,discrete=discrete)
     print("Power law degree is:", results.power_law.alpha)
-    ## Graph
-    l = np.linspace(np.min(x),np.max(x))
-    fig, (ax1,ax2) = plt.subplots(1,2,figsize=(20,8))
-    # ax1
-    ax1.plot(l,l**(-results.power_law.alpha),color="r",label=f"powerlaw, gamma = {results.power_law.alpha:.4}")
-    ax1.scatter(x,y,label=metric+" distribution")
-    ax1.set_xlabel(metric)
-    ax1.set_ylabel("P("+metric+")")
-    ax1.legend()
-    # ax2
-    l = np.linspace(np.min(x_log),np.max(x_log))
-    ax2.plot(l,l*(-results.power_law.alpha),color="r",label=f"powerlaw, gamma = {results.power_law.alpha:.4}")
-    ax2.scatter(x_log,y_log,label=metric+" distribution")
-    ax2.set_xlabel("log("+metric+")")
-    ax2.set_ylabel("log( P("+metric+") )")
-    ax2.legend()
+    print("Power law xmin is:", results.power_law.xmin)
+    if pw_plot:
+        results.plot_pdf(original_data=True,linear_bins=False)
+    else:
+        ## Graph
+        l = np.linspace(np.min(x),np.max(x))
+        fig, (ax1,ax2) = plt.subplots(1,2,figsize=(20,8))
+        # ax1
+        ax1.plot(l,l**(-results.power_law.alpha),color="r",label=f"powerlaw, gamma = {results.power_law.alpha:.4}")
+        ax1.scatter(x,y,label=metric+" distribution")
+        ax1.set_xlabel(metric)
+        ax1.set_ylabel("P("+metric+")")
+        ax1.legend()
+        # ax2
+        l = np.linspace(np.min(x_log),np.max(x_log))
+        ax2.plot(l,l*(-results.power_law.alpha),color="r",label=f"powerlaw, gamma = {results.power_law.alpha:.4}")
+        ax2.scatter(x_log,y_log,label=metric+" distribution")
+        ax2.set_xlabel("log("+metric+")")
+        ax2.set_ylabel("log( P("+metric+") )")
+        ax2.legend()
 
-    plt.suptitle("Power Law fit of "+metric,fontsize=16)
+        plt.suptitle("Power Law fit of "+metric,fontsize=16)
     plt.show()
 
 print("Functions loaded!")
