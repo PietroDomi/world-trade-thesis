@@ -175,6 +175,10 @@ build/
 *.cb
 *.cb2
 .*.lb
+*.run.xml
+*.bcf
+*.blg
+*.bbl
 
 ## Build tool auxiliary files:
 *.fdb_latexmk
