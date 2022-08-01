@@ -153,10 +153,11 @@ def load_filtered_data(table, save=False, verbose=1, force_reload=False, sorted=
                         df_y_f = df_y[build_filters(df_y,params,table,str(y)+"52",prod_code_df)]
                         # print("df_y_f",(df_y_f.VALUE_IN_EUROS < 0).any())
                         df_y_filtered = df_y_f.astype(params["types"])
+                        del df_y_f
                     # print("df_y_filtered",(df_y_filtered.VALUE_IN_EUROS < 0).any())
                     df = pd.concat([df,df_y_filtered])
                     # print("df",(df.VALUE_IN_EUROS < 0).any())
-                    del df_y, df_y_f, df_y_filtered
+                    del df_y, df_y_filtered
                 elif params["months"] == "all":
                     for m in tqdm(range(1,13),leave=False):
                         # if verbose:
