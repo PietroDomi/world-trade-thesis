@@ -158,6 +158,7 @@ src/wto/*
 *.csv
 cred*
 *.ini
+tesi.md
 
 # LATEX
 tex/*.pdf
