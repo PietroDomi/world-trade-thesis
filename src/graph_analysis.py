@@ -131,6 +131,8 @@ def load_filtered_data(table, save=False, verbose=1, force_reload=False, sorted=
         if table not in ["full","tr","tr_intra_","wto","complete"]:
             raise Exception("table not valid")
         df = pd.DataFrame(columns=params["columns"])
+        if params["years"] == "all":
+            params["years"] = [y for y in range(2001,2022)]
         for y in tqdm(params["years"],leave=False):
             if verbose:
                 print(y,end=" ")
