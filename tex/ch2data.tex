@@ -12,25 +12,32 @@ The data needed for constructing the dataset and performing the analysis come fr
 \subsection{COMEXT}
 
 The starting dataset of my research is named COMEXT, and is published and maintained by Eurostat \cite{eurostat2022comext}. COMEXT is a statistical database for detailed statistics on international trade in goods\footnote{The definition of \textit{goods} provided by Eurostat is "\textit{all movable property including electricity}"}. It serves as an important indicator of the performance of the European Union (EU) economy, because it focuses on the size and the evolution of imports and exports of countries. It provides access not only to both recent and historical data of the EU and its individual Member States, but also to statistics of a significant number of non-EU countries. The information contained in it is based on data provided by the statistical agencies of the EU member states and trading partners.
-Data are organized in tables, one for each year, and each table contains information about the country that declared the transaction, the partner country, the product that was exchanged according to multiple international standard classifications (or nomenclatures), the value in euros of the exchange and its quantity in kilograms.
+Data are organized in tables, one for each year (or for each month) and each table contains information about the country that declared the transaction, the partner country, the product that was exchanged according to multiple international standard classifications (or nomenclatures), the value in euros of the exchange and its quantity in kilograms.
 Let us now have a look at an extraction from this dataset, as you can see in Table \ref{tab:comextexample}.
-
-
+\begin{landscape}
 \begin{table}\label{tab:comextexample}
     \centering
-    \begin{tabular}{c|c}p
-         &  \\
-         & 
-    \end{tabular}
-    \caption{Caption needed}
+    \input{tex/tables/full_example}
+    \caption{Random sample taken from the COMEXT dataset referring to imports and exports exchanged during January 2001.}
 \end{table}
+\end{landscape}
+The data available follow the shown format. Each row corresponds to a transaction, an exchange of a certain good between two countries in a given period. The information available about each transaction is summarized here\footnote{ISO stands for International Standardization Organization, which harmonizes codes and abbreviations across the world (\url{www.iso.org}).}:
+\begin{itemize}
+    \item \textit{DECLARANT} and \textit{DECLARANT ISO}: code and ISO name of the country that declared the trade.;
+    \item \textit{PARTNER} and \textit{PARTNER ISO}: code and ISO name of the country with which the declarant traded;
+    \item \textit{TRADE TYPE}: indicates whether the exchange was among two EU countries (I) or one was extra-EU (E);
+    \item all the \textit{PRODUCT} columns: they are used to classify the good that was exchanged, according to different nomenclatures and standards;
+    \item \textit{FLOW}: indicates whether the exchange was reported as an import (1) by the declarant or as an export (2);
+    \item \textit{PERIOD}: indicates the time period of the exchange, in the format \texttt{yyyymm}\footnote{If it refers to a whole year then the format is \texttt{yyyy52}.};
+    \item \textit{VALUE IN EUROS}: indicates the monetary value of the exchange between countries of that product;
+    \item \textit{QUANTITY IN KG}: indicated the weight in kilograms of the exchange between countries of that product.
+\end{itemize}
+
+
 
 %%esempio di tabella che viene da COMEXT -- altrimenti così son solo parole
 %%Questo può essere quello che ti avevo segnato come capitolo 3 -- spiegazione etc etc 
 %%Descrizione e visualizzazione del dataset - dati nulli, dati non comuni
-
-
-
 \paragraph{COMEXT Data collection}
 Historically, the main source of information about trade transactions between countries are customs authorities, which provide detailed information on exports and imports of goods with a geographical breakdown.
 The COMEXT system was conceived and implemented in the early 90's,  following the adoption of the European Single Market on 1993, when customs formalities between Member States were removed. Since then, it has been continuously adapted and re-engineered to take into account technological evolution and new users' needs. The data gathered are based on two data collection systems:
