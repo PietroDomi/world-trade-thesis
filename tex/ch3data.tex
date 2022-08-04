@@ -33,15 +33,23 @@ The data available follow the shown format. Each row corresponds to a transactio
     \item \textit{QUANTITY IN KG}: indicated the weight in kilograms of the exchange between countries of that product.
 \end{itemize}
 
+
+
 \subsubsection{Summary statistics}
-Thanks to COMEXT data, we are able to conduct many types of analyses on commerce among countries. 
+Thanks to COMEXT data, we are able to conduct many types of analyses on commerce among countries. A first look at the data tells us that, by exploiting the variables that we have at disposal, we can observe if there are any trends in the EU economy as a whole, aggregating on all countries and products. This is shown in Figure \ref{fig:totaleu}. 
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{tex/pics/TOTAL_EU.png}
-    \caption{Total value of exchanges aggregated across EU countries over time.}
+    \includegraphics[width=\textwidth]{tex/pics/TOTAL_VQP_INTRA.png}
+    \caption{Long term trends of trade exchanges across EU member countries, by various indicators: (1) value (€), (2) quantity (Kg), (3) price (€/kg).}
     \label{fig:totaleu}
 \end{figure}
+
+In the first plot, we have on the horizontal axis time in years, while on the vertical axis we have monetary value expressed in euros. What is shown here is an aggregated sum of the total value of products exchanged by EU countries among themselves (intra-EU trade). This can be interpreted as an important indicator of the state of the whole economy, and in fact we can recognize in it two of the major economic events that happened in the last two decades: the 2008 financial crisis and the 2020 COVID-19 epidemic and related economic fallout. Since 2004 the growth of intra-EU trade was stable and sustained, up until the second semester of 2008, where we see a notable drop in total value, and a reprise only after the end of 2009. A similar effect can be seen at the beginning of 2020, where the lockdown due to the epidemic caused a sudden drop in the commerce of non-essential products, which almost brought the economy to a halt. Then production reprised in the second half of 2020, and we need to wait until 2021 for the values to reach pre-COVID levels.
+If we look instead at the big picture, we see that overall intra-EU trade follows a positive trend that has basically doubled the value in 20 years. One has to wonder whether this increase in total money exchanged in commerce is due to an actual increase in production and circulation of goods, or is due just to inflation and higher prices of products. If we look at the second plot, we can observe the total quantity in kilograms of products exchanged in the EU economy. As before, we see a positive trend in the last 20 years, supporting our hypothesis that production has expanded. We also observe the same drops of trade exchanges following the two crises.
+At last, in the third plot we see the evolution of prices in the same time frame, obtained by dividing each exchange's value by its quantity.
+
+
 
 
 %%esempio di tabella che viene da COMEXT -- altrimenti così son solo parole
@@ -56,9 +64,12 @@ The COMEXT system was conceived and implemented in the early 90's,  following th
 \end{itemize}
 
 
+The COMEXT dataset, however, presents a problem if one wants to use it to build an analysis on world trade. In fact, the only data contained in it are the ones reported by European countries, or even less than that, members of the European Union. Therefore, if we look at the whole network of commerce, we are missing some relevant information: the trade of extra-EU countries among themselves, since they have no obligation to communicate to Eurostat their records.
+For this reason, and because I want to conduct a complete analysis and have a complete overview of the trade network, I needed to find another source of information, which I then integrated with COMEXT.
+
 \subsection{WTO}
-Similar to Eurostat, also the World Trade Organization (WTO) collects data about the global commerce of products among countries \cite{wto2022stats}. Data are periodically sent to the organization from member countries, hence the dataset contains information about all the major world countries.
-%% ok, aggiungerei un bel po' di cose qui prima di correggerlo
+Similar to Eurostat, also the World Trade Organization (WTO) collects data about the global commerce of products among countries \cite{wto2022stats}. Data are periodically sent to the organization from member countries, hence the dataset contains information about all the major world countries. 
+
 
 \section{Nomenclatures}
 
