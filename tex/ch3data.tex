@@ -17,7 +17,7 @@ Let us now have a look at an extraction from this dataset, as you can see in Tab
 \begin{landscape}
 \begin{table}\label{tab:comextexample}
     \centering
-    \input{tex/tables/full_example}
+    \input{tables/full_example}
     \caption{Random sample taken from the COMEXT dataset referring to imports and exports exchanged during January 2001.}
 \end{table}
 \end{landscape}
@@ -40,21 +40,19 @@ Thanks to COMEXT data, we are able to conduct many types of analyses on commerce
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{tex/pics/TOTAL_VQP_INTRA.png}
+    \includegraphics[width=\textwidth]{pics/TOTAL_VQP_INTRA.png}
     \caption{Long term trends of trade exchanges across EU member countries, by various indicators: (1) value (€), (2) quantity (Kg), (3) price (€/kg).}
     \label{fig:totaleu}
 \end{figure}
 
 In the first plot, we have on the horizontal axis time in years, while on the vertical axis we have monetary value expressed in euros. What is shown here is an aggregated sum of the total value of products exchanged by EU countries among themselves (intra-EU trade). This can be interpreted as an important indicator of the state of the whole economy, and in fact we can recognize in it two of the major economic events that happened in the last two decades: the 2008 financial crisis and the 2020 COVID-19 epidemic and related economic fallout. Since 2004 the growth of intra-EU trade was stable and sustained, up until the second semester of 2008, where we see a notable drop in total value, and a reprise only after the end of 2009. A similar effect can be seen at the beginning of 2020, where the lockdown due to the epidemic caused a sudden drop in the commerce of non-essential products, which almost brought the economy to a halt. Then production reprised in the second half of 2020, and we need to wait until 2021 for the values to reach pre-COVID levels.
-If we look instead at the big picture, we see that overall intra-EU trade follows a positive trend that has basically doubled the value in 20 years. One has to wonder whether this increase in total money exchanged in commerce is due to an actual increase in production and circulation of goods, or is due just to inflation and higher prices of products. If we look at the second plot, we can observe the total quantity in kilograms of products exchanged in the EU economy. As before, we see a positive trend in the last 20 years, supporting our hypothesis that production has expanded. We also observe the same drops of trade exchanges following the two crises.
-At last, in the third plot we see the evolution of prices in the same time frame, obtained by dividing each exchange's value by its quantity.
-
-
-
+If we look instead at the big picture, we see that overall intra-EU trade follows a positive trend that has basically doubled the value in 20 years. One has to wonder whether this increase in total money exchanged in commerce is due to an actual increase in production and circulation of goods, or is due just to inflation and higher prices of products. If we look at the second plot, we can observe the total quantity in kilograms of products exchanged in the EU economy. As before, we see a positive trend in the last 20 years, supporting our hypothesis that production has expanded. We also observe the same drops of trade exchanges following the two crises. Furthermore, what can be observed in both of the previous two plots is a yearly seasonality of these time series, where the values usually go up in the first trimester of the year, then they go down after mid-year, only to pick up again in the last part of the period. 
+At last, in the third plot we see the evolution of prices in the same time frame, obtained by dividing each exchange's value by its quantity. Note that the vertical axis is in log scale. Here we can see a different behavior than previously. While in the first eight years of the millennium prices of traded products have been going down, with less and less volatility year by year (which can also explain why demand and commerce of these goods has gone up), we can easily see that in the period following the 2008 crisis they went rapidly up again. This is a known and reasonable effect of those events, since when dealing with scarcity and uncertainty prices naturally rise, and with them also variability. It took more than three years after 2009 for these inflated prices to go down, and it can be easily seen that by the start of 2014 they were even lower than before 2008. Then they started slowly to grow, as we observe a  slight positive trend until 2020, with periodical cycles which last about a year. After 2021, which marked a first step out of the pandemic with the diffusion of COVID vaccines, we see the economy picking up again, and as with the aftermath of crises, also prices and volatility increase.
 
 %%esempio di tabella che viene da COMEXT -- altrimenti così son solo parole
 %%Questo può essere quello che ti avevo segnato come capitolo 3 -- spiegazione etc etc 
 %%Descrizione e visualizzazione del dataset - dati nulli, dati non comuni
+
 \paragraph{COMEXT Data collection}
 Historically, the main source of information about trade transactions between countries are customs authorities, which provide detailed information on exports and imports of goods with a geographical breakdown.
 The COMEXT system was conceived and implemented in the early 90's,  following the adoption of the European Single Market on 1993, when customs formalities between Member States were removed. Since then, it has been continuously adapted and re-engineered to take into account technological evolution and new users' needs. The data gathered are based on two data collection systems:
