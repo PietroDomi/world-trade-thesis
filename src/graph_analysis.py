@@ -259,6 +259,9 @@ def extract_table_for_graph(df_in, y="2020", flow="all", criterio="VALUE_IN_EURO
         else:
             filters = filters & (df_to_filter.TRANSPORT_MODE == transport_mode)
     
+    if pop_df is None:
+        pop_df = load_population_df()[0]
+
     ## COUNTRIES WITHOUT POPULATION OR AGGREGATES
     for c in set(df_to_filter.DECLARANT_ISO).union(set(df_to_filter.PARTNER_ISO)):
         if c not in pop_df.index:
