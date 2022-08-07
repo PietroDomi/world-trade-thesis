@@ -4,9 +4,10 @@
 
 The data needed for constructing the dataset and performing the analysis come from multiple sources:
 \begin{itemize}
-    \item European Statistical Office (Eurostat) \cite{eurostat2022comext}
-    \item World Trade Organization (WTO) \cite{wto2022stats}
-    \item United Nations (UN) \cite{un2022population}
+    \item European Statistical Office (Eurostat) \cite{eurostat2022comext};
+    \item World Trade Organization (WTO) \cite{wto2022stats};
+    \item United Nations (UN) \cite{un2022population};
+    \item European Central Bank (ECB) \cite{ecb2021usdeur}.
 \end{itemize}
 
 \subsection{COMEXT}
@@ -61,13 +62,19 @@ The COMEXT system was conceived and implemented in the early 90's,  following th
     \item data of intra-EU exchanges are directly collected from trade operators once a month.
 \end{itemize}
 
-
 The COMEXT dataset, however, presents a problem if one wants to use it to build an analysis on world trade. In fact, the only data contained in it are the ones reported by European countries, or even less than that, members of the European Union. Therefore, if we look at the whole network of commerce, we are missing some relevant information: the trade of extra-EU countries among themselves, since they have no obligation to communicate to Eurostat their records.
 For this reason, and because I want to conduct a complete analysis and have a complete overview of the trade network, I needed to find another source of information, which I then integrated with COMEXT.
 
 \subsection{WTO}
-Similar to Eurostat, also the World Trade Organization (WTO) collects data about the global commerce of products among countries \cite{wto2022stats}. Data are periodically sent to the organization from member countries, hence the dataset contains information about all the major world countries. 
-Mamaaooooooo
+Similar to Eurostat, also the World Trade Organization (WTO) collects data about the global commerce of products among countries \cite{wto2022stats}. Data are periodically sent to the organization from member countries, hence the dataset contains information about all the major world countries.
+Its structure is similar to COMEXT.
+
+\begin{table}
+    \centering
+    \input{tables/wto_example.tex}
+    \caption{Random sample taken from the WTO dataset.}
+    \label{tab:wtoexample}
+\end{table}
 
 \section{Nomenclatures}
 
@@ -76,3 +83,20 @@ According to Eurostat \cite{eurostat2022website}, "\textit{a statistical classif
 This procedure ensures that data is comparable between EU Member States, and for the purposes of this research, it enables us to put together reports of exchanges declared by different countries.
 
 
+\section{Population UN}
+Being able to produce aggregate statistics, however, is just the starting point of one's analysis. Given the data at hand, one would want to be able to confront the imports and exports of different countries and be able to tell which exchanges are most relevant to a nation's economy. However, every country has different size, and with it different expenses of the economy, different levels of production and needs for importing products that can't in any way be self produced. For example, small countries such as Luxembourg, Vatican City, San Marino have very high import expenses relatively to their size, while larger countries such as Germany, France or Italy may present a bigger value of imports in absolute value, but it may constitute a small part of the country's economy.
+Therefore, to be able to confront these types of exchanges, I needed to find an exogenous normalizing variable, which would serve as a proxy of the country's size of the economy, and would provide me with an indicator of each exchange's importance for the receiving country. 
+In my analysis, I chose to use the country's population. I used the data published by the United Nations, as part of the 2022 Revision of the World Population Prospects \cite{un2022population} (curated by the Population Division of the Department of Economic and Social Affairs of the United Nations Secretariat). It presents population estimates from 1950 to the present for 237 countries, as well as population projections to the year 2100, which however are not of interest in this research. The table contains population data for each country for each year, and a reduced version is presented in Appendix \ref{tab:unpop}, showing the numbers every 5 years.
+
+
+\begin{table}
+    \centering
+    \input{tables/norm_example}
+    \caption{Random sample of exchanges from 2021 taken from the combined COMEXT-WTO dataset. The numbers refer to the totality of products.}
+    \label{tab:normexample}
+\end{table}
+
+We can have a look
+
+
+\section{Currency exchange}
