@@ -25,7 +25,7 @@ def combine_sources(df_com, df_wto):
     df_extra = df_wto[~(df_wto.DECLARANT_ISO.isin(df_com.DECLARANT_ISO.unique()))&~(df_wto.PARTNER_ISO.isin(df_com.DECLARANT_ISO.unique()))]
     return pd.concat([df_com,df_extra],axis=0).reset_index(drop=True)
 
-def load_filtered_data(table, save=False, verbose=1, force_reload=False, sorted=True, **params):
+def load_filtered_data(table, save=False, verbose=1, force_reload=False, sorted=True, show_file_name=False, **params):
     """"
     load_filtered_data("full", save=True, force_reload=True, columns=g.full_columns, types=g.full_types, 
                         group_by_prod_code=True, n_digits=2, years=[2012], months=None, product="all", 
@@ -132,56 +132,81 @@ def load_filtered_data(table, save=False, verbose=1, force_reload=False, sorted=
             raise Exception("table not valid")
         df = pd.DataFrame(columns=params["columns"])
         if params["years"] == "all":
-            params["years"] = [y for y in range(2001,2022)]
+            end_y = 2021 if table in ["wto","complete"] else 2022
+            params["years"] = [y for y in range(2001,end_y)]
         for y in tqdm(params["years"],leave=False):
             if verbose:
                 print(y,end=" ")
             if table == "complete":
-                df_com = pd.read_parquet(f"./data-samples/full/Years/full{y}52.parquet",columns=params["columns"])
-                df_wto = pd.read_parquet(f"./data-samples/wto/Years/wto{y}52.parquet",columns=params["columns"])
-                df_y = combine_sources(df_com,df_wto)
-                if "group_by_prod_code" in params.keys() and params["group_by_prod_code"]:
-                    df_y_filtered = group_by_prod_code(df_y[build_filters(df_y,params,table,str(y)+"52",prod_code_df)].astype(params["types"]),**params)
-                else:
-                    df_y_filtered = df_y[build_filters(df_y,params,table,str(y)+"52",prod_code_df)].astype(params["types"])
-                df = pd.concat([df,df_y_filtered])
-            else:
-                if params["months"] is None:
-                    df_y = pd.read_parquet(f"./data-samples/{table}/Years/{table}{y}52.parquet",columns=params["columns"])
-                    # print("df_y",(df_y.VALUE_IN_EUROS < 0).any())
+                try:
+                    df_com = pd.read_parquet(f"./data-samples/full/Years/full{y}52.parquet",columns=params["columns"])
+                    full_ok = True
+                except:
+                    print(f"There's a problem with ./data-samples/full/Years/full{y}52.parquet")
+                try:
+                    df_wto = pd.read_parquet(f"./data-samples/wto/Years/wto{y}52.parquet",columns=params["columns"])
+                    wto_ok = True
+                except:
+                    print(f"There's a problem with ./data-samples/wto/Years/wto{y}52.parquet")
+                if full_ok and wto_ok:
+                    df_y = combine_sources(df_com,df_wto)
                     if "group_by_prod_code" in params.keys() and params["group_by_prod_code"]:
                         df_y_filtered = group_by_prod_code(df_y[build_filters(df_y,params,table,str(y)+"52",prod_code_df)].astype(params["types"]),**params)
                     else:
-                        df_y_f = df_y[build_filters(df_y,params,table,str(y)+"52",prod_code_df)]
-                        # print("df_y_f",(df_y_f.VALUE_IN_EUROS < 0).any())
-                        df_y_filtered = df_y_f.astype(params["types"])
-                        del df_y_f
-                    # print("df_y_filtered",(df_y_filtered.VALUE_IN_EUROS < 0).any())
+                        df_y_filtered = df_y[build_filters(df_y,params,table,str(y)+"52",prod_code_df)].astype(params["types"])
                     df = pd.concat([df,df_y_filtered])
-                    # print("df",(df.VALUE_IN_EUROS < 0).any())
-                    del df_y, df_y_filtered
+            else:
+                if params["months"] is None:
+                    try:
+                        df_y = pd.read_parquet(f"./data-samples/{table}/Years/{table}{y}52.parquet",columns=params["columns"])
+                        table_ok = True
+                    except:
+                        print(f"There's a problem with ./data-samples/{table}/Years/{table}{y}52.parquet")
+                    if table_ok:
+                        # print("df_y",(df_y.VALUE_IN_EUROS < 0).any())
+                        if "group_by_prod_code" in params.keys() and params["group_by_prod_code"]:
+                            df_y_filtered = group_by_prod_code(df_y[build_filters(df_y,params,table,str(y)+"52",prod_code_df)].astype(params["types"]),**params)
+                        else:
+                            df_y_f = df_y[build_filters(df_y,params,table,str(y)+"52",prod_code_df)]
+                            # print("df_y_f",(df_y_f.VALUE_IN_EUROS < 0).any())
+                            df_y_filtered = df_y_f.astype(params["types"])
+                            del df_y_f
+                        # print("df_y_filtered",(df_y_filtered.VALUE_IN_EUROS < 0).any())
+                        df = pd.concat([df,df_y_filtered])
+                        # print("df",(df.VALUE_IN_EUROS < 0).any())
+                        del df_y, df_y_filtered
                 elif params["months"] == "all":
                     for m in tqdm(range(1,13),leave=False):
                         # if verbose:
                         #     print(str(m),end=" ")
-                        df_ym = pd.read_parquet(f"./data-samples/{table}/Months/{table}{y*100+m}.parquet",columns=params["columns"])
-                        if "group_by_prod_code" in params.keys() and params["group_by_prod_code"]:
-                            df_y_filtered = group_by_prod_code(df_ym[build_filters(df_ym,params,table,str(y*100+m),prod_code_df)].astype(params["types"]),**params)
-                        else:
-                            df_y_filtered = df_ym[build_filters(df_ym,params,table,str(y*100+m),prod_code_df)].astype(params["types"])
-                        df = pd.concat([df,df_y_filtered])
-                    del df_ym, df_y_filtered
+                        try:
+                            df_ym = pd.read_parquet(f"./data-samples/{table}/Months/{table}{y*100+m}.parquet",columns=params["columns"])
+                            table_ok = True
+                        except:
+                            print(f"There's a problem with ./data-samples/{table}/Months/{table}{y*100+m}.parquet")
+                        if table_ok:
+                            if "group_by_prod_code" in params.keys() and params["group_by_prod_code"]:
+                                df_y_filtered = group_by_prod_code(df_ym[build_filters(df_ym,params,table,str(y*100+m),prod_code_df)].astype(params["types"]),**params)
+                            else:
+                                df_y_filtered = df_ym[build_filters(df_ym,params,table,str(y*100+m),prod_code_df)].astype(params["types"])
+                            df = pd.concat([df,df_y_filtered])
+                            del df_ym, df_y_filtered
                 else:
                     for m in params["months"]:
                         if verbose:
                             print(str(m),end=" ")
-                        df_ym = pd.read_parquet(f"./data-samples/{table}/Months/{table}{y*100+m}.parquet",columns=params["columns"])
-                        if "group_by_prod_code" in params.keys() and params["group_by_prod_code"]:
-                            df_y_filtered = group_by_prod_code(df_ym[build_filters(df_ym,params,table,str(y*100+m),prod_code_df)].astype(params["types"]),**params)
-                        else:
-                            df_y_filtered = df_ym[build_filters(df_ym,params,table,str(y*100+m),prod_code_df)].astype(params["types"])
-                        df = pd.concat([df,df_y_filtered])
-                    del df_ym, df_y_filtered
+                        try:
+                            df_ym = pd.read_parquet(f"./data-samples/{table}/Months/{table}{y*100+m}.parquet",columns=params["columns"])
+                            table_ok = True
+                        except:
+                            print(f"There's a problem with ./data-samples/{table}/Months/{table}{y*100+m}.parquet")
+                        if table_ok:
+                            if "group_by_prod_code" in params.keys() and params["group_by_prod_code"]:
+                                df_y_filtered = group_by_prod_code(df_ym[build_filters(df_ym,params,table,str(y*100+m),prod_code_df)].astype(params["types"]),**params)
+                            else:
+                                df_y_filtered = df_ym[build_filters(df_ym,params,table,str(y*100+m),prod_code_df)].astype(params["types"])
+                            df = pd.concat([df,df_y_filtered])
+                            del df_ym, df_y_filtered
         if df.shape[0] == 0:
             if verbose:
                 print("\n\tEmpty table")
@@ -206,6 +231,8 @@ def load_filtered_data(table, save=False, verbose=1, force_reload=False, sorted=
                     if verbose:
                         print(",\t Table loaded")
                 except:
+                    if show_file_name:
+                        print(str_save)
                     if verbose:
                         print("\nFailed saving",end="")
                         print(", Table loaded")
@@ -260,7 +287,7 @@ def extract_table_for_graph(df_in, y="2020", flow="all", criterio="VALUE_IN_EURO
             filters = filters & (df_to_filter.TRANSPORT_MODE == transport_mode)
     
     if pop_df is None:
-        pop_df = load_population_df()[0]
+        pop_df, eu_iso = load_population_df()
 
     ## COUNTRIES WITHOUT POPULATION OR AGGREGATES
     for c in set(df_to_filter.DECLARANT_ISO).union(set(df_to_filter.PARTNER_ISO)):
@@ -293,8 +320,6 @@ def extract_table_for_graph(df_in, y="2020", flow="all", criterio="VALUE_IN_EURO
         df[criterio+"_SCALED"] = df[criterio] / df[criterio+"_TOT"]
         df = df[df[criterio+"_SCALED"] >= threshold_abs].sort_values(criterio+"_SCALED",ascending=False)
     elif scale_by == 'population':
-        if pop_df is None:
-            pop_df, eu_iso = load_population_df()
         # y_ = "2020" if y == "2021" else y
         df_out = df_to_scale.merge(pop_df[[y]],left_on="country_to",right_on="iso2")
         for crit in ["VALUE_IN_EUROS","QUANTITY_IN_KG"]:
@@ -302,7 +327,7 @@ def extract_table_for_graph(df_in, y="2020", flow="all", criterio="VALUE_IN_EURO
             df_out[crit+"_RESCALED"] = df_out[crit+"_SCALED"] / df_out[crit+"_SCALED"].sum()
             # df["VALUE_IN_EUROS_MM"] = MinMaxScaler().fit_transform(df["VALUE_IN_EUROS_SCALED"].to_numpy().reshape((-1,1)))[:,0]
         df_out.sort_values("VALUE_IN_EUROS_RESCALED",ascending=False,inplace=True)
-        df_out = df_out[df_out["VALUE_IN_EUROS_RESCALED"].cumsum() <= threshold_cs].reset_index(drop=True)
+        df_out = df_out[df_out["VALUE_IN_EUROS_RESCALED"].cumsum() <= threshold_cs].reset_index(drop=True).rename(columns={y:"population"})
         # Old method
         # df = df[df["VALUE_IN_EUROS_SCALED"] > threshold].sort_values(criterio+"_SCALED",ascending=False)
     elif scale_by == 'out_edges':
