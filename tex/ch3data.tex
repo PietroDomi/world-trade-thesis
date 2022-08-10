@@ -12,14 +12,15 @@ The data needed for constructing the dataset and performing the analysis come fr
 
 \subsection{COMEXT}
 
-The starting dataset of my research is named COMEXT, and is published and maintained by Eurostat \cite{eurostat2022comext}. COMEXT is a statistical database for detailed statistics on international trade in goods\footnote{The definition of \textit{goods} provided by Eurostat is "\textit{all movable property including electricity}"}. It serves as an important indicator of the performance of the European Union (EU) economy, because it focuses on the size and the evolution of imports and exports of countries. It provides access not only to both recent and historical data of the EU and its individual Member States, but also to statistics of a significant number of non-EU countries. The information contained in it is based on data provided by the statistical agencies of the EU member states and trading partners.
+The starting dataset of my research is named COMEXT, and is published and maintained by Eurostat \cite{eurostat2022comext}. COMEXT is a statistical database for detailed statistics on international trade in goods\footnote{The definition of \textit{goods} provided by Eurostat is "\textit{all movable property including electricity}".}. It serves as an important indicator of the performance of the European Union (EU) economy, because it focuses on the size and the evolution of imports and exports of countries. It provides access not only to both recent and historical data of the EU and its individual Member States, but also to statistics of a significant number of non-EU countries. The information contained in it is based on data provided by the statistical agencies of the EU member states and trading partners.
 Data are organized in tables, one for each year (or for each month) and each table contains information about the country that declared the transaction, the partner country, the product that was exchanged according to multiple international standard classifications (or nomenclatures), the value in euros of the exchange and its quantity in kilograms.
 Let us now have a look at an extraction from this dataset, as you can see in Table \ref{tab:comextexample}.
 \begin{landscape}
-\begin{table}\label{tab:comextexample}
+\begin{table}
     \centering
     \input{tables/full_example}
     \caption{Random sample taken from the COMEXT dataset referring to imports and exports exchanged during January 2001.}
+    \label{tab:comextexample}
 \end{table}
 \end{landscape}
 The data available follow the shown format. Each row corresponds to a transaction, an exchange of a certain good between two countries in a given period. The information available about each transaction is summarized here\footnote{ISO stands for International Standardization Organization, which harmonizes codes and abbreviations across the world (\url{www.iso.org}). The conversion is displayed in Appendix Table \ref{tab:iso2}.}:
@@ -42,13 +43,13 @@ Thanks to COMEXT data, we are able to conduct many types of analyses on commerce
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{pics/TOTAL_VQP_INTRA.png}
-    \caption{Long term trends of trade exchanges across EU member countries, by various indicators: (1) value (€), (2) quantity (Kg), (3) price (€/kg).}
+    \caption[Long term trends of trade exchanges across EU member countries]{Long term trends of trade exchanges across EU member countries, by various indicators: (1) value (€), (2) quantity (Kg), (3) price (€/kg).}
     \label{fig:totaleu}
 \end{figure}
 
 In the first plot, we have on the horizontal axis time in years, while on the vertical axis we have monetary value expressed in euros. What is shown here is an aggregated sum of the total value of products exchanged by EU countries among themselves (intra-EU trade). This can be interpreted as an important indicator of the state of the whole economy, and in fact we can recognize in it two of the major economic events that happened in the last two decades: the 2008 financial crisis and the 2020 COVID-19 epidemic and related economic fallout. Since 2004 the growth of intra-EU trade was stable and sustained, up until the second semester of 2008, where we see a notable drop in total value, and a reprise only after the end of 2009. A similar effect can be seen at the beginning of 2020, where the lockdown due to the epidemic caused a sudden drop in the commerce of non-essential products, which almost brought the economy to a halt. Then production reprised in the second half of 2020, and we need to wait until 2021 for the values to reach pre-COVID levels.
 If we look instead at the big picture, we see that overall intra-EU trade follows a positive trend that has basically doubled the value in 20 years. One has to wonder whether this increase in total money exchanged in commerce is due to an actual increase in production and circulation of goods, or is due just to inflation and higher prices of products. If we look at the second plot, we can observe the total quantity in kilograms of products exchanged in the EU economy. As before, we see a positive trend in the last 20 years, supporting our hypothesis that production has expanded. We also observe the same drops of trade exchanges following the two crises. Furthermore, what can be observed in both of the previous two plots is a yearly seasonality of these time series, where the values usually go up in the first trimester of the year, then they go down after mid-year, only to pick up again in the last part of the period. 
-At last, in the third plot we see the evolution of prices in the same time frame, obtained by dividing each exchange's value by its quantity. Note that the vertical axis is in log scale. Here we can see a different behavior than previously. While in the first eight years of the millennium prices of traded products have been going down, with less and less volatility year by year (which can also explain why demand and commerce of these goods has gone up), we can easily see that in the period following the 2008 crisis they went rapidly up again. This is a known and reasonable effect of those events, since when dealing with scarcity and uncertainty prices naturally rise, and with them also variability. It took more than three years after 2009 for these inflated prices to go down, and it can be easily seen that by the start of 2014 they were even lower than before 2008. Then they started slowly to grow, as we observe a  slight positive trend until 2020, with periodical cycles which last about a year. After 2021, which marked a first step out of the pandemic with the diffusion of COVID vaccines, we see the economy picking up again, and as with the aftermath of crises, also prices and volatility increase.
+At last, in the third plot, we see the evolution of prices in the same time frame, obtained by dividing each exchange's value by its quantity. Note that the vertical axis is in log scale. Here we can see a different behavior than previously. While in the first eight years of the millennium prices of traded products have been going down, with less and less volatility year by year (which can also explain why demand and commerce of these goods has gone up), we can easily see that in the period following the 2008 crisis they went rapidly up again. This is a known and reasonable effect of those events, since when dealing with scarcity and uncertainty prices naturally rise, and with them also variability. It took more than three years after 2009 for these inflated prices to go down, and it can be easily seen that by the start of 2014 they were even lower than before 2008. Then they started slowly to grow, as we observe a  slight positive trend until 2020, with periodical cycles which last about a year. After 2021, which marked a first step out of the pandemic with the diffusion of COVID vaccines, we see the economy picking up again, and as with the aftermath of crises, also prices and volatility increase.
 
 %%esempio di tabella che viene da COMEXT -- altrimenti così son solo parole
 %%Questo può essere quello che ti avevo segnato come capitolo 3 -- spiegazione etc etc 
@@ -56,7 +57,7 @@ At last, in the third plot we see the evolution of prices in the same time frame
 
 \paragraph{COMEXT Data collection}
 Historically, the main source of information about trade transactions between countries are customs authorities, which provide detailed information on exports and imports of goods with a geographical breakdown.
-The COMEXT system was conceived and implemented in the early 90's,  following the adoption of the European Single Market on 1993, when customs formalities between Member States were removed. Since then, it has been continuously adapted and re-engineered to take into account technological evolution and new users' needs. The data gathered are based on two data collection systems:
+The COMEXT system was conceived and implemented in the early 90s,  following the adoption of the European Single Market in 1993, when customs formalities between Member States were removed. Since then, it has been continuously adapted and re-engineered to take into account technological evolution and new users' needs. The data gathered are based on two data collection systems:
 \begin{itemize}
     \item data on trade in goods with non-EU countries are collected by customs authorities and are based on the records of trade transactions in customs declarations;
     \item data of intra-EU exchanges are directly collected from trade operators once a month.
@@ -67,36 +68,129 @@ For this reason, and because I want to conduct a complete analysis and have a co
 
 \subsection{WTO}
 Similar to Eurostat, also the World Trade Organization (WTO) collects data about the global commerce of products among countries \cite{wto2022stats}. Data are periodically sent to the organization from member countries, hence the dataset contains information about all the major world countries.
-Its structure is similar to COMEXT.
+Its structure is similar to COMEXT, but with a few differences: in fact, the data points are available with an annual periodicity instead of monthly as for the ones supplied by Eurostat. In Table \ref{tab:wtoexample} we can see a sample extracted from this dataset. As before, each row corresponds to the sum of exchanges between two countries in a given year, and for each import we have the following information:
+\begin{itemize}
+    \item \textit{Reporting Country}: the country that reported the value to WTO;
+    \item \textit{Partner Country}: the country that exported the product to the reporting country;
+    \item \textit{Product Code}: the code that identifies the category of the product exchanged, according to the Harmonized System (HS) nomenclature;
+    \item \textit{Year}: indicating the year which the number refers to;
+    \item \textit{Value}: the amount in US dollars that corresponds to the exchanged products' worth.
+\end{itemize}
 
 \begin{table}
     \centering
     \input{tables/wto_example.tex}
-    \caption{Random sample taken from the WTO dataset.}
+    \caption[Random sample taken from the WTO dataset]{Random sample taken from the WTO dataset, including codes of the HS nomenclature ranging from 960000 to 970000.}
     \label{tab:wtoexample}
 \end{table}
 
-\section{Nomenclatures}
+Given the two available datasets I needed to find a way to combine them and to merge the variables of one with the other. Specifically, I needed to solve these issues:
+\begin{enumerate}
+    \item The information about the European countries was repeated in both datasets, so I needed to choose which one to keep;
+    \item The nomenclature for the products was different, so I needed to use a conversion table and transform one into the other;
+    \item The monetary value of the exchange was in US dollars, so I needed to convert it to Euros according to the exchange rate of that period.
+\end{enumerate}
 
-In order to classify products into categories, many nomenclatures have been published by different organizations that try to organize merchandise items in groups with similar features, so that aggregate statistics and analysis can be produced. One of them is the Classification of Products by Activity (CPA), maintained by the European Commission and Eurostat.
+Hence I proceeded as follows. For issue (1) I decided to keep the data from COMEXT and integrate it with WTO: this means that if we partition the countries in EU members and non-EU members, I get from COMEXT the data on intra-EU trade plus trade where one of the two countries is an EU member\footnote{More specifically, being an EU member for this purpose means that in that year the country has declared their numbers to Eurostat.}, while I get from WTO the rest of the trade data, that is, exchanges among two extra-EU countries.
+Regarding issue (2), the solution was straightforward once I employed a conversion table, that allowed me to go from the HS classification to the CPA 2.1 nomenclature, as explained in Section \ref{sec:nomandusd}; while for issue (3) I'll show how the values were converted from US dollars to Euros, using a variable annual exchange rate.
+
+
+\subsection{Nomenclatures and Currency}\label{sec:nomandusd}
+
+In order to classify products into categories, many nomenclatures (or classifications) have been published by different organizations. Product classifications are designed to categorize products that have common characteristics. They provide the basis for collecting and calculating statistics on the production, distributive trade, consumption, international trade and transport of such products. The two datasets that I want to integrate, COMEXT and WTO, follow two different nomenclatures, created by two different institutions.
+One of them is the Classification of Products by Activity (CPA), maintained by the European Commission and Eurostat.
 According to Eurostat \cite{eurostat2022website}, "\textit{a statistical classification or nomenclature is an exhaustive and structured set of mutually exclusive and well-described categories, often presented in a hierarchy that is reflected by the numeric or alphabetical codes assigned to them, used to standardize concepts and compile statistical data}".
-This procedure ensures that data is comparable between EU Member States, and for the purposes of this research, it enables us to put together reports of exchanges declared by different countries.
+This procedure ensures that data is comparable between EU Member States, and for the purposes of this research, it enables us to put together reports of exchanges declared by different countries. While products in COMEXT are classified according to CPA, in the WTO dataset they follow the Harmonized Commodity Description and Coding System (HS), developed by the World Customs Organization (WCO) \cite{wco2022hs}. The system is used by more than 200 countries and economies as a basis for their Customs tariffs and for the collection of international trade statistics.\\
+Although they have different categories and codes, these two nomenclatures have the same hierarchical structure: the classification starts with a super-category which is then broken down into smaller subcategories, adding more details to the description. This is highlighted by the digits or couple of digits of the numerical code that identifies the product. As an example, let us take the first row of Table \ref{tab:comextexample}, which is from COMEXT. The code in the column for CPA 2.1 is ``2572", and it is read in the following way:
+\begin{itemize}
+    \item The first two digits identify the broader category: in this case ``25" corresponds to \textit{Fabricated metal products, except machinery and equipment};
+    \item The third digit identifies the first subcategory: ``257" corresponds to \textit{Cutlery, tools and general hardware};
+    \item The fourth digit identifies the second subcategory: ``2572" corresponds to \textit{Locks and hinges}.
+\end{itemize}
+The analysis that will be conducted will focus only on the super-categories, that are identified by the first two digits of the code. The motivation behind this is that such classification is specific enough to be able to identify a relevant trade marked for these goods, but not too detailed so to fall into niche markets.
+Therefore, before integrating the two data sources, what I needed to do was to convert the codes from the HS nomenclature in the WTO dataset into codes from the CPA 2.1, thanks to conversion tables provided by Eurostat\footnote{Available at \url{https://ec.europa.eu/eurostat/ramon/index.cfm} .}.
 
+% PLOT WITH MAIN CATEGORIES
+% TABLE WITH TWO DIGIT CPA CATEGORIES IN APPENDIX
 
-\section{Population UN}
-Being able to produce aggregate statistics, however, is just the starting point of one's analysis. Given the data at hand, one would want to be able to confront the imports and exports of different countries and be able to tell which exchanges are most relevant to a nation's economy. However, every country has different size, and with it different expenses of the economy, different levels of production and needs for importing products that can't in any way be self produced. For example, small countries such as Luxembourg, Vatican City, San Marino have very high import expenses relatively to their size, while larger countries such as Germany, France or Italy may present a bigger value of imports in absolute value, but it may constitute a small part of the country's economy.
+\paragraph{Currency exchange}\label{sec:usdeur}
+The last issue to deal with when integrating the data is the change of currency, since I wanted to compare everything in euros. Since my purpose is to compare trade over time I coudn't use a single value for the exchange rate. Hence I used the dataset provided by the European Central Bank \cite{ecb2021usdeur}, which reports the weekly value of the exchange rates, as well as the annual value. The numbers I used are shown in Table \ref{tab:usdeur}.
+
+\begin{table}
+    \centering
+    \input{tables/usd_eur}
+    \caption{ECB's annual exchange rates from USD to EUR.}
+    \label{tab:usdeur}
+\end{table}
+
+\section{Towards the Network}
+
+% 1 Normalize
+\subsection{Normalizing by Population}
+Being able to produce aggregate statistics, however, is just the starting point of one's analysis. Given the data at hand, one would want to be able to confront the imports and exports of different countries and be able to tell which exchanges are most relevant to a nation's economy. However, every country has different size, and with it different expenses of the economy, different levels of production and needs for importing products that can't in any way be self produced. For example, small countries such as Luxembourg, Vatican City, San Marino have very high import expenses relatively to their size, while larger countries such as Germany, France or Italy may present a bigger number in absolute value, but it may constitute a small part of the country's economy.
 Therefore, to be able to confront these types of exchanges, I needed to find an exogenous normalizing variable, which would serve as a proxy of the country's size of the economy, and would provide me with an indicator of each exchange's importance for the receiving country. 
-In my analysis, I chose to use the country's population. I used the data published by the United Nations, as part of the 2022 Revision of the World Population Prospects \cite{un2022population} (curated by the Population Division of the Department of Economic and Social Affairs of the United Nations Secretariat). It presents population estimates from 1950 to the present for 237 countries, as well as population projections to the year 2100, which however are not of interest in this research. The table contains population data for each country for each year, and a reduced version is presented in Appendix \ref{tab:unpop}, showing the numbers every 5 years.
-
+In my analysis, I chose to use the country's population. I used the data published by the United Nations, as part of the 2022 Revision of the World Population Prospects \cite{un2022population} (curated by the Population Division of the Department of Economic and Social Affairs of the United Nations Secretariat). It presents population estimates from 1950 to the present for 237 countries, as well as population projections to the year 2100, which however are not of interest in this research. The table contains population data for each country for each year, and a reduced version is presented in Appendix \ref{app:unpop}, showing the numbers every 5 years.
+What I would do then is to take for each row of the dataset (as in Tables \ref{tab:comextexample} and \ref{tab:wtoexample}) the variable of the monetary value (and weight) and divide them by the population of the receiving country in that year. A sample of the resulting normalization is shown in Table \ref{tab:normexample}. 
 
 \begin{table}
     \centering
     \input{tables/norm_example}
-    \caption{Random sample of exchanges from 2021 taken from the combined COMEXT-WTO dataset. The numbers refer to the totality of products.}
+    \caption[Random sample of exchanges from 2021 taken from the combined COMEXT-WTO dataset]{Random sample of exchanges from 2021 taken from the combined COMEXT-WTO dataset. The numbers refer to the totality of products imported from that country in that year, the population in expressed in thousands.}
     \label{tab:normexample}
 \end{table}
 
-We can have a look
+If we look at the first row, we have there reported the total value of imports from Portugal (PT) to the United Kingdom (GB) in 2021, and it amounts to around 3 billion euros worth of products. In order to assess whether this is an important expenditure for the UK, we divide this number by the estimated population of Great Britain in 2021, i.e. around 67 million people, and we get an expense of 45,663 euros for every 1000 citizens. The same is done for the other rows, and this produces a variable that we can compare both across countries and across years, since we take into account population's evolution through time. As an example of why normalization is fundamental, we can have a look at row 5, that is, imports from Qatar (QA) to India (IN). The absolute value of the exchanged products' worth is more than double the one between PT and GB, however, since India has a population of almost 1.4 billion people (which is more than twenty times the population of the UK) the resulting normalized variable has a value which is ten times less than the first row. Looking at the two relationships between the four countries, my interpretation is that for the UK, the imports from Portugal can be considered more important than the imports from Qatar are for India. Or in other words, we can say that the dependence of the UK from Portugal is stronger than the dependence of India from Qatar. This type of comparison gains more meaning when comparing imports of the same product, implying a stronger expense pro capite of that good, or imports/exports from the same country or to the same country. For example we can see which are the main import or export partners of Italy, by ranking them according to this normalized variable (Table \ref{tab:itIEtop10}).\\
+Hence, as a result of this normalization, I have created a variable which is relevant for what I am going to do next, that is building a graph where the nodes are the countries and the links are the exchanges of products, weighted with this new variable.
+
+\begin{table}
+    \centering
+    \resizebox{1.0\textwidth}{!}{
+    \input{tables/3_ita_IEtop10}
+    }
+    \caption{Caption}
+    \label{tab:itIEtop10}
+\end{table}
+
+% 2 Mischio I/E
+\subsection{Combining the Flows TO MOVE}
+Once the numbers have been normalized, I needed to address a necessary adjustment present in the COMEXT dataset. In fact, the way that data collection works for Eurostat is that each EU country periodically sends information about their trade, regarding the products and amounts of both imports and exports. Therefore, if we take two countries that are both EU members, we will find four data entries of exchanges between them in a given period, although two of them refer to the same exchange as the other two. To better understand, we can look at Table \ref{tab:flows}. The first row displays the imports (flow equal to 1) of France from Germany of the product 3030, and this exchange was declared by France. Since they are both in the EU, we should expect also to have an entry of the same product declared by Germany but reported as export (flow equal to 2), and in fact we see it in row 3. The same goes for the opposite direction of the trade, from France to Germany, and in fact we find it in rows 2 and 4. The issue with this is that the numbers reported are not the same, but we encounter some discrepancy. Sometimes the difference is negligible, while other times it is more significant. For example, in this case the difference between what was declared by France and by Germany can account for a relative error of $13.3\%$. One possible reason why this is the case might have to do with the timing at which countries report their numbers, due to transportation times, delays, or simple bureaucratic procedures. For example, an exchange might be reported under one month for a country and under the following one for the other country.
+Independently of the reason, I decided to proceed by averaging the two numbers. The reason behind this is that for the purposes of my analysis, the relevant information is the relative size of this trade relationship with respect to other countries or to other products, and by taking the average I still maintain the same order of magnitude and size of the transaction.
+Therefore, once I have grouped the rows in pairs and averaged them, I can proceed to the next step of the data preparation.
+
+\begin{table}
+    \centering
+    % \resizebox{1.0\textwidth}{!}{
+    \input{tables/3_double_flows}
+    % }
+    \caption[Example of double data entries for the same exchange in January 2001 in the COMEXT dataset, filtered only for IT, DE, FR.]{Example of double data entries for the same exchange in January 2001 in the COMEXT dataset, filtered only for IT, DE, FR. The codes of the product shown refer to: 3030: \textit{Air and spacecraft and related machinery}; 2910: \textit{Motor vehicles}.}
+    \label{tab:flows}
+\end{table}
+
+% 3 Creo grafo pesato (nodi poi archi)
+\subsection{Creating the graphs}
+% so i have this
+% y prod from to €/1000p 
+% why value and not quantity
+% i want to do graph
+% nodes: countries fixed
+% edges: exchanges normalized
+% type of: directed, multilayer, weighted/un
+% plot with without wto
+Once I have normalized the values and reduced the rows to contain unique information, I am left with a unique dataset with the following information on the columns:
+\begin{itemize}
+    \item \textit{Year}: indicating the period of the aggregated exchanges;
+    \item \textit{Country From}: indicating the country where the product originated from;
+    \item \textit{Country To}: indicating the country where the product went to;
+    \item \textit{Product Code}: indicating the category of the product according to the CPA 2.1 nomenclature;
+    \item \textit{Normalized Value}: indicating the normalized expense for that import, expressed in € per 1000 inhabitants.
+\end{itemize}
+International trade is often referred to as a network, and in fact it is quite straightforward to represent it as a graph. We can consider as nodes the countries of the world, and then we can add edges between them based on whether they are trade partners or not. This is the simplest network that can be constructed, and using this basic schema, we can construct different types of graphs. As a matter of fact, the main part of the analysis will deal with \textit{directed weighted networks}: the connections between nodes have a weight and a direction, from one node to the other. The weights of the edges are assigned according to the normalized value of the expense for that product, and the direction of the exchange will go from the country that exports to the country that imports, following the same movement that the merchandise does in reality.
 
 
-\section{Currency exchange}
+
+
+% 4 Threshold per rete binaria
+\subsection{Binarizing the graph}
+
+
+% Maybe plot on WTO trend

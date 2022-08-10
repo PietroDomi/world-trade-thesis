@@ -26,7 +26,6 @@
 % % \urlstyle{same}
 \usepackage[sorting=none,style=numeric]{biblatex}
 % \usepackage{fontspec}
-% \defaultfontfeatures{Mapping=tex-text}
 % \setmainfont{Verdana}
 % \renewcommand{\familydefault}{\sfdefault}
 
@@ -59,7 +58,9 @@
 
 \tableofcontents
 
-% \pagebreak
+\listoftables
+\listoffigures
+\pagebreak
 
 % Introduction chapter
 \input{ch1intro}
@@ -68,9 +69,9 @@
 % Data and Graphs chapter
 \input{ch3data}
 % Methods and Analysis chapter
-\input{ch3analysis}
+\input{ch4analysis}
 % Scenarios and insights
-\input{ch4scenarios}
+\input{ch5conclusions}
 
 % \bibliographystyle{alpha}
 \printbibliography
