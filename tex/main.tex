@@ -22,9 +22,11 @@
     pdftitle={World Trade Thesis},
     pdfpagemode=FullScreen,
     }
-    
-% % \urlstyle{same}
-\usepackage[sorting=none,style=numeric,backend=biber]{biblatex}
+\usepackage[font=footnotesize]{caption}
+\usepackage[dvipsnames]{xcolor}
+
+% Citations
+\usepackage[sorting=none, style=numeric, backend=biber]{biblatex}
 \addbibresource{references.bib}
 % \usepackage{fontspec}
 % \setmainfont{Verdana}
@@ -62,20 +64,20 @@
 \pagebreak
 
 % Introduction chapter
-\input{ch1intro}
+\input{tex/ch1intro}
 % Boh
-\input{ch2litrev}
+\input{tex/ch2litrev}
 % Data and Graphs chapter
-\input{ch3data}
+\input{tex/ch3data}
 % Methods and Analysis chapter
-\input{ch4analysis}
+\input{tex/ch4analysis}
 % Scenarios and insights
-\input{ch5conclusions}
+\input{tex/ch5conclusions}
 
 % \bibliographystyle{alpha}
 \printbibliography
 
 \appendix
-\input{appendix}
+\input{tex/appendix}
 
 \end{document}
