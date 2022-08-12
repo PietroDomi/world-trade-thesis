@@ -72,7 +72,7 @@ def load_filtered_data(table, save=False, verbose=1, force_reload=False, sorted=
         df = pd.read_parquet(f"./data-samples/manual/{table}/{table}__{get_params_str_hash(params)}.parquet")
         if verbose:
             print("Table loaded")
-        return df, None
+        return df
     else:
         prod_code_df = params["columns"][0]
 
@@ -410,9 +410,9 @@ def calc_metrics(G,y="2021"):
     
     return pd.DataFrame(metrics)
 
-def makeGraph(tab_edges, tab_nodes=None, pos_ini=None, weight_flag=False, criterio="VALUE_IN_EUROS", compute_metrics=True, compute_layout=False, lay_dist=5):
+def makeGraph(tab_edges, tab_nodes=None, pos_ini=None, directed=True, weight_flag=False, weight_layout=False, criterio="VALUE_IN_EUROS", compute_metrics=True, compute_layout=False, lay_dist=5):
     
-    G = nx.DiGraph()
+    G = nx.DiGraph() if directed else nx.Graph()
     if tab_nodes is not None:
         # df_pop, eu_iso = load_population_df()
         # tab_nodes = get_world_countries(df_pop, eu_iso, year=int(tab_edges.columns.name))
@@ -450,7 +450,8 @@ def makeGraph(tab_edges, tab_nodes=None, pos_ini=None, weight_flag=False, criter
                 x = random.uniform(0, 1000)
                 y = random.uniform(0, 1000)
                 pos_ini[node] = np.array([x,y])
-        coord = nx.spring_layout(G,weight=None,k=lay_dist/math.sqrt(G.order()),iterations=1000)
+        coord = nx.spring_layout(G, weight=("weight" if weight_layout else None),
+                                 k=lay_dist/math.sqrt(G.order()), iterations=1000)
 
     return coord, MetricG, G
     
