@@ -1,9 +1,42 @@
 \chapter{Methods and Analysis chapter}
 
-% Take my thesis and copy the style, however, basically what you did and how you did it 
-% So 
-% \begin{itemize}
-%     \item Each method \& analysis has its section
-%     \item Draw some conclusions about this (here \textbf{technical} ones!)
-% \end{itemize}
+Take my thesis and copy the style, however, basically what you did and how you did it 
+So 
+\begin{itemize}
+    \item Each method \& analysis has its section
+    \item Draw some conclusions about this (here \textbf{technical} ones!)
+\end{itemize}
 
+\section{Stochastic Block Model}\label{sec:sbm}
+\cite*{lee2019review}
+
+Stochastic block models (SBM) are an increasingly popular class of model in the field of statistical analysis of graphs and networks. They can be used to discover or understand the latent structure of a network, as well as for clustering purposes. In our particular case, I will apply this method on the trade graphs to discover if any communities or clusters emerge and find an interpretation for them.
+I will procede now to describe a formal version of the stochastic block model, togehter with the needed terminology. This part is adapted from \citeauthor{lee2019review}.\\
+Let us consider a graph $\cal{G} = (\cal{N},\cal{E})$, where $\cal{N}$ is the node set of size $n = |\cal{N}|$, and $\cal{E}$ is the edge set of size $M = |\cal{E}|$. Taking two nodes $p$ and $q$ from $\cal{N}$, we call a pair of nodes a \textit{dyad}, and the existence of an edge for the dyad $(p,q)$ is denoted by $\bf{Y}_{pq}$ which is an element of the $n \times n$ adiacency matrix $\bf{Y}$. If $\cal{G}$ is directed, as in our case, then the adjacency matrix is not symmetric and $\bf{Y}_{pq}$ is independent of $\bf{Y}_{qp}$ In the case of binary directed graphs, as in Section \ref{}, the adjacency matrix is a binary matrix, while in the case of weighted directed graphs, the matrix $Y$ can assume any value according to the weight of the edge.\\
+In the SBM, each node belongs to one of the $K$ groups (which are less than $n$): since the groups are unknown before modeling, for node $p = 1,\ldots,n$ we also define a vector $\bf{Z}_p$ of dimension $K$ which is a one-hot vector representing the membership of node $p$. This means that all the elements of $\bf{Z}_{p}$ are 0 except for one position, call it $k$, which is equal to $1$, signifying that node $p$ belongs to group $k$.
+Similar to $\bf{Z}_{p}$, we also define a $n \times K$ matrix $\bf{Z}$ as
+\[
+    \bf{Z} = (\bf{Z}_1 \cdots \bf{Z}_n)^T
+\]
+where we call $\bf{Z}_{pi}$ the $i$-th element of $\bf{Z}_p$.\\
+If we take $\bf{Z}$ and we sum over the rows, then we can obtain a vector $\bf{N} = (\bf{N}_1\cdots\bf{N}_K)^T$ of the group sizes, since the vectors $\bf{Z}_{p}$ are zero-one.
+In order to describe the the generation of the edges of $\cal{G}$ according to the group the nodes belong to, we introduce a $K \times K$ block matrix $\bf{C}$. Given that $\cal{G}$ is directed, we have that for $1 \leq i,j \leq K$, $\bf{C}_{ij}$ represents the probability of having a directed edge from node $i$ to node $j$. The idea of the block matrix $\bf{C}$ is that the dyads are conditionally independent given the group memberships $\bf{Z}$. Equivalently, we could also say that
+\[
+    \bf{Y}_{pq} \sim Bernoulli(\bf{Z}^T_p \bf{C} \bf{Z}_q),
+\]
+that is to say that $\bf{Y}_{pq}$ follows a Bernoulli distribution where the success probability is the probability of having a node between the two groups to which $p$ and $q$ belong to. Furthermore, $\bf{Y}_{pq}$ is independent of $\bf{Y}_{rs}$ for $(p,q) \neq (r,s)$, given $\bf{Z}_p$ and $\bf{Z}_q$.\\
+The assumption that the edge probability of a dyad depends only on their memberships is based on the concept of \textit{stochastic equivalence}: for nodes $p$ and $q$ in the same group, the probability of $p$ connecting with node $r$ is the equal and independent as the probability of $q$ connected with $r$. This concept does not require that the nodes in the same group are more connected within thhemselves than with nodes in another group, but essentially it means that they express the same characteristics in terms of which nodes (of which group) they are connected to. We can also say this by noting that the elements among the major diagonal of $\bf{C}$ are not necessarily higher than the off-diagonal elements.\\
+Given $\bf{Z}$ and $\bf{C}$, and given the assumption that the edges are Bernoulli distributed conditional on the group memberships, then we can write down the likelihood as 
+\begin{equation}\label{eq:sbmlik}
+    \pi (\bf{Y}|\bf{Z},\bf{C}) = \prod_{p\neq q}^n \pi(\bf{Y}_{pq}|\bf{Z},\bf{c}) 
+    = \prod_{p\neq q}^n \left[ \left( \bf{Z}^T_p \bf{C} \bf{Z}_q \right)^{\bf{Y}_{pq}} \left( 1 - \bf{Z}^T_p \bf{C} \bf{Z}_q \right)^{(1-\bf{Y}_{pq})} \right]
+\end{equation}
+By applying a change of index, we can rewrite \ref{eq:sbmlik} as
+\begin{equation}
+    \pi (\bf{Y}|\bf{Z},\bf{C}) = \prod_{i \leq j} \bf{C}^{\bf{E}_{ij}}_{ij} (1 - \bf{C}_{ij})^{(\bf{N}_{ij} - \bf{E}_{ij})}
+\end{equation}
+where in the case of directed graphs we have $\bf{N}_{ij} = \bf{N}_i\bf{N}_j$ if $i \neq j$, $\bf{N}_{ij} = \bf{N}_i(\bf{N}_i-1)$ if $i=j$.\\
+When applying SBMs to real-world data, such as in our case, usually neither $\bf{Z}$ nor $\bf{C}$ is known, and they have to be inferred, therefore we need to make assumption before modelling. For $p = 1,...,n$, we assume that the latent variable $\bf{Z}_p$ is independent of $\bf{Z}_q$ a priori. We also assume that $P(\bf{Z}_{pi}=1) = \theta_i$, where $\theta_i$ is the $i$-th element of the $K$-vector $\bf{\theta} = (\theta_1 \dots \theta_K)^T$ such that $\sum_{i=1}^K \theta_i = 1$. Essentially, we could say that the latent group $\bf{Z}_p$ follows the multinomial distribution with probabilities $\bf{\theta}$, that is
+\begin{equation}
+    \pi(\bf{Z}|\theta) = \prod_{p=1}^n \bf{Z}_p^T \theta = \prod_{p=1}^n \theta^T \bf{Z}_p = \prod_{i=1}^K \theta^{N_i}_i
+\end{equation}
