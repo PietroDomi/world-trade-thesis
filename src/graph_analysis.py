@@ -364,6 +364,8 @@ def calc_metrics(G,y="2021"):
         n_ctr_ex = n_ctr - n_ctr_eu
         return G.number_of_edges() / (n_ctr_eu*(n_ctr_eu-1)+2*n_ctr_ex*n_ctr_eu)
 
+    hubs, authorities = nx.hits(G)
+
     metrics={
              "edges": G.number_of_edges(),
              "nodes": G.number_of_nodes(),
@@ -377,7 +379,9 @@ def calc_metrics(G,y="2021"):
              "density": nx.density(G),
              "density_adj": adjusted_density(G,y),
              "clustering": nx.clustering(G),
-             "page_rank": nx.pagerank(G)
+             "page_rank": nx.pagerank(G),
+             "hubs": hubs,
+             "authorities": authorities
             # "betweenness_centrality":nx.betweenness_centrality(G), # SP not interesting
             # "hubness": nx.closeness_centrality(G.to_undirected()) # SP not interesting
         }
@@ -410,7 +414,8 @@ def calc_metrics(G,y="2021"):
     
     return pd.DataFrame(metrics)
 
-def makeGraph(tab_edges, tab_nodes=None, pos_ini=None, directed=True, weight_flag=False, weight_layout=False, criterio="VALUE_IN_EUROS", compute_metrics=True, compute_layout=False, lay_dist=5):
+def makeGraph(tab_edges, tab_nodes=None, pos_ini=None, directed=True, weight_flag=False, weight_layout=False, criterio="VALUE_IN_EUROS", compute_metrics=True,
+            compute_layout=False, lay_dist=5, lay_it=1000, lay_tol=1e-4):
     
     G = nx.DiGraph() if directed else nx.Graph()
     if tab_nodes is not None:
@@ -451,7 +456,7 @@ def makeGraph(tab_edges, tab_nodes=None, pos_ini=None, directed=True, weight_fla
                 y = random.uniform(0, 1000)
                 pos_ini[node] = np.array([x,y])
         coord = nx.spring_layout(G, weight=("weight" if weight_layout else None),
-                                 k=lay_dist/math.sqrt(G.order()), iterations=1000)
+                                 k=lay_dist/math.sqrt(G.order()), iterations=lay_it, threshold=lay_tol)
 
     return coord, MetricG, G
     
