@@ -73,6 +73,8 @@ A second metric that we can compute for the whole network is the \textit{average
     C_{avg} = \frac{1}{N} \sum_{i=1}^N C_i
 \]
 
+TODO: DENSITY
+
 \pagebreak
 \section{Visualization of Trade Networks}
 
@@ -104,9 +106,42 @@ Given all the reasons that are explained in this paragraph, it is easy to see th
 
 
 \pagebreak
-\section{Page Rank Analysis}
+\section{PageRank Analysis}
+In the world trade network, most countries are characterized by weak trade links, but there exists a group of countries featuring a large number of strong relationships, which suggests a core-periphery structure \cite{fagiolo}, and this is particularly true of advanced countries \cite{deguchi}. As pointed out before, we can have an understanding of the network by looking at the centrality measures of its nodes (in- and out-degree) or of the entire graph (average degree, density). However, node degrees are computed using only local information, since for every node it is enough to know its neighbors. Let me introduce now a centrality measure that instead takes into account the relationships of the entire network and their effect on the node under consideration: the PageRank. 
+First introduced by \textcite{page1999pagerank}, this measure of centrality of a node derives from its network neighbors' and is proportional to their centrality divided by their out-degree. What this means is that nodes which point to many others give only a small amount of centrality on to each of those others, even if their own centrality is high. Hence, to compute a node's pagerank we need to know its neighbors' pagerank, and so on, showing the fact that the information for each single node comes from the whole graph. Intuitively, we can think of PageRank as a kind of "fluid" that circulates through the network, passing from node to node across edges following their direction, and accumulating at the nodes which are most important \cite{easley2012networks}. To be more precise, we compute PageRank ($pr$) in the following way:
+\begin{enumerate}
+    \item Given a graph with $n$ nodes, we start by assigning to all nodes the same initial value for $pr$, set to $1/n$;
+    \item Choose a number $k$ of iterations, and for $k$ steps repeat:\\
+            Each node divides its current $pr$ equally across its out-going links, and passes these equal shares to the pages it points to. Each node updates its new $pr$ as the sum of the shares that it receives from the neighbors.
+    \item 
+\end{enumerate}
+One can prove that (except in certain degenerate cases) the PageRank values of all nodes converge to limiting values as the number of steps $k$ goes to infinity. To avoid cases in which the total available $pr$ in the network ends up in nodes that have no link that can give it back, we can introduce a \textit{scaled} version of the PageRank, whose formula is
+\begin{equation}\label{eq:pagerank}
+    pr_i = \alpha \sum_{j} a_{ij} \frac{pr_j}{d_j^{out}} + \beta
+\end{equation}
+where $\alpha$ and $\beta$ are positive constants, $a_{ij}$ is an entry of the adjacency matrix and $pr_i$ and $pr_j$ are the PageRank values of nodes $i$ and $j$, respectively. 
+The economic significance of this centrality measure is that a country with high PageRank centrality is connected to a central country, which is also a country with high PageRank centrality. Central countries themselves have high PageRank centrality indicating that they are core sources in that specific market.
+An alternative way to define the PageRank of a graph is the eigenvector of the following Google matrix:
+\begin{equation}
+    g_{ij} = q \frac{a_{ij}{\sum a_{ij}}}} + (1-q)\frac{1}}{N}
+\end{equation}
+Here q = 0.85 is 
+
+In recent years, a major topic in network science research has been the investigation of the effects of ranking algorithms on the performance and behavior of networked systems. \textcite{ermann2011google} found that the page rank approach gives a ranking that is independent of the trade amount of a given country.
 
 
+PageRank centrality assigns high centrality values to those nodes which have a high number of incoming edges from other nodes with high centrality. In terms of countries and trade, a country has high PageRank if it imports trade from other countries with high PageRank. 
+In economic studies, the word "hub" is not strictly defined, but it is frequently used to indicate countries that have a high number of outgoing links with a large amount of trade, which means that they export great amounts of goods to others.
+
+\paragraph{Hubs and Authorities}
+
+According to what is reported by \textcite{deguchi2014}, an economic hub country usually imports raw materials, parts, and intermediate goods from other countries, assembles final goods and exports these goods to other countries. % Maybe talk about China being a hub country, if verified
+In the case of directed networks, we can also define a node's high centrality if it \textit{points to} another country with high centrality, i.e. if a country exports to other central countries \cite{sajedianfard2021quantitative}. Therefore, the types of central countries that we can find in networks such as this are two: \textit{hubs} and \textit{authorities}:
+\begin{itemize}
+    \item[\textbf{Hubs}] The countries that trade with important and central points (with respect to that specific trade market) and they export to other important and central countries (the authorities) of the network;
+    \item[\textbf{Authorities}] The countries that are important and central points of a specific trade market in the import sector.
+\end{itemize}
+To put it simply, a node with a high authority value is pointed to by many other nodes with high hub values, and a node with a high hub value points to many nodes with high authority values. Note however that an authority may also be a hub and vice versa. In the context of the world trade network, we can interpret the two centrality measures differently, just by switching the perspective of the interpretation. Authorities are countries that receive a lot of imports, from many countries, and thus are dependent from them for that specific product. Contrary to what the name suggests, very often countries with high authority values are small countries that completely depend on imports from others for their demand of goods. Instead, hubs are countries that send a lot of exports, they are producers or manufacturers of goods and they export those goods to a high number of other countries.
 
 
 \pagebreak
