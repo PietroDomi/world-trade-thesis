@@ -35,45 +35,83 @@ We say that two nodes are \textit{neighbors} if they are connected by an edge. T
 
 A complete description of a graph requires us to keep track of its nodes and edges: this is often done using a so-called \textit{adjacency matrix}. The adjacency matrix $A$ of a directed graph with $N$ nodes is a $N \times N$ matrix, where $A_{ij} = 1$ if there is an edge going from node $j$ to node $i$, while $A_{ij} = 0$ if there isn't. For an undirected network instead, the adjacency matrix has the property of being symmetric, i.e. $A_{ij} = A_{ji}$.
 
-Another relevant distinction about graphs is whether the edges have a weight assigned to them or not. A network is called \textit{weighted} if each edge $(i,j)$ has a unique weight $w_{ij}$ assigned to it. It is called \textit{unweighted} (or \textit{binary}) if it has no weights assigned, or equivalently if the possible weights are just $\{0,1\}$ (no edge vs. edge). For the \textit{weighted} networks the elements of the adjacency matrix contain the weight of the edges as $A_{ij} = w_{ij}$. This is the case with the trade networks that we are going to analyze, where the edges between two countries have as weight the monetary value of the exchange.
+Another relevant distinction about graphs is whether the edges have a weight assigned to them or not. A network is called \textit{weighted} if each edge $(i,j)$ has a unique weight $w_{ij}$ assigned to it. It is called \textit{unweighted} (or \textit{binary}) if it has no weights assigned, or equivalently if the possible weights are just $\{0,1\}$ (no edge vs. edge). For the \textit{weighted} networks we can introduce the weighted network matrix $\mathbf{W}$, which has the same size as the adjacency matrix $A$ and whose component are the weights $w_{ij}$.This is the case with the trade networks that we are going to analyze, where the edges between two countries have as weight the monetary value of the exchange, and therefore the element $w_{ij}$ represents the annual amounts of imports per 1000 people from country $i$ to country $j$, measured in euros/1000p.
 
 
-\paragraph{Node properties.}
-A key property of each node is its \textit{degree}, which is the number of edges that it has to other nodes. We denote by $k_i$ the degree of the $i$-th node in the graph. In our specific case, the degree of a node represents the number of commercial partners that a country has, for either import or export: for example, Italy had a degree of (TODO:insert italy degree) in YYYY, meaning that it traded goods with X partners in that year.
+\subsection{Node properties}
+A key property of each node is its \textit{degree}, which is the number of edges that it has that connect to other nodes. We denote by $k_i$ the degree of the $i$-th node in the graph, and we can compute it as 
+\[
+    k_i = \sum_{j=1}^N a_{ij}
+\] 
+In our specific case, the degree of a node represents the number of commercial partners that a country has, for either import or export: for example, Italy had a degree of (TODO:insert italy degree) in YYYY, meaning that it traded goods with X partners in that year.
 Since the network under consideration is directed, we make a distinction between \textit{incoming degree} (or \textit{in-degree}) and \textit{outgoing degree} (or \textit{out-degree}):
 \begin{itemize}
-    \item \textit{in-degree}: denoted by $k_i^{in}$, is the number of edges that point to node $i$;
-    \item \textit{out-degree}: denoted by $k_i^{out}$, is the number of edges that point from node $i$ to other nodes.
+    \item \textit{in-degree}: denoted by $k_i^{in}$, is the number of edges that point to node $i$, i.e. $\sum_{j=1} a_{ji}$;
+    \item \textit{out-degree}: denoted by $k_i^{out}$, is the number of edges that point from node $i$ to other nodes, i.e. $\sum_{j=1} a_{ij}$.
 \end{itemize}
 The degree $k_i$ of node $i$ can be directly obtained from the elements of the adjacency matrix: if the network is undirected, summing over the rows (or the columns) gives in return a vector of all the node degrees. For a directed network instead, the two sums give different metrics: the sum over the rows gives the incoming degrees, while the sum over the columns the outgoing degrees.
 
-Given all the degrees of the nodes in the graph, one can also introduce the \textit{degree distribution} $p_k$, which is a discrete distribution indicating the probability that a randomly selected node has degree $k$. For a network of $N$ nodes, the degree distribution is the normalized histogram given by 
-\[ p_k = \frac{N_k}{N} \]
-where $N_k$ is the number of nodes that have degree $k$. \\
+In weighted networks, we can also have a different type of degree centrality, that takes into account the weights of the edges. We call it \textit{weighted degree} (sometimes it is called \textit{strength}) an it corresponds to the sum of the weights of the links of a given node. In our particular case, this alone wouldn't make much sense, since we would be summing together values of imports and exports of a country, so we make a distinction into \textit{weighted in-degree} $k_i^{w,in}$ and \textit{weighted out-degree} $k_i^{w,in}$ as
+\begin{align*}
+    k_i^{w,in} = \sum_{j=1}^N w_{ji} \\    
+    k_i^{w,out} = \sum_{j=1}^N w_{ij} \,.    
+\end{align*}
+As for the unweighted version, these degrees can be obtained by summing over the rows or the columns of the weighted network matrix $\mathbf{W}$ to obtain the \textit{weighted in-degree} and \textit{weighted out-degree}, respectively.
 
-TODO: insert piece about weighted degree (strength) \\
-
-The \textit{clustering coefficient} represents the extent to which the neighbors of a given node are linked to each other. For a node $i$ with degree $k_i$ the local clustering coefficient is
+Aside from degree centrality measures, one can also investigate for each node how its neighborhood behaves, especially in terms of connectivity among the nodes in it. We can then define another centrality metric called \textit{clustering coefficient}: it represents the extent to which the neighbors of a given node are linked to each other, or in other words, the tendency of a network to form tightly connected neighborhoods. For a node $i$ with degree $k_i$ the local clustering coefficient is
 \[
     C_i = \frac{2 L_i}{k_i(k_i-1)}
 \]
-where $L_i$ is the number of edges among the $k_i$ neighbors of node $i$.
-The clustering coefficient measures the graph's local edge density: in fact, the more interconnected the neighborhood of node $i$ is, the higher the coefficient.
+where $L_i$ is the number of edges among the $k_i$ neighbors of node $i$. The clustering coefficient measures the graph's local edge density: in fact, the more interconnected the neighborhood of node $i$ is, the higher the coefficient. Small-world networks are characterized by their high clustering coefficient, thus we use this measure to help us characterize the structure of the graph.\\
 
-\paragraph{Graph properties.}
+There are many other centrality maeasures that are commonly used when studying graphs, especially regarding the notion of path. In a graph, a \textit{path} is a sequence of nodes and edges that start from a given node $i$ and arrive at node $j$. Provided that such path exists, one could also find the \textit{shortest path} between two nodes (the one with fewer edges) among the set of possible paths that connect them. Around the notion of shortest path, we could construct two additional metrics, that are \cite{benedictis2014bacicepii}:
+\begin{itemize}
+    \item \textbf{Closeness centrality}: it is a measure of how close, in terms of shortest path, a node is with respect to all the other nodes; closeness centrality provides high scores to nodes that are located closer to their set of reachable nodes.
+    \item \textbf{Betweenness centrality}: it depicts how well situated a node is in terms of the path that it lies on; that is, a higher score is assigned to nodes that lie on a larger proportion of the whole set of shortest paths among all pairs of nodes. It is a useful mesaure in the cases when a node is important as an intermediary.
+\end{itemize}
+Although paths are fundamental concepts in graph theory, in the case of the world trade network under consideration it is hard to attach a meaning to them. The connections among nodes represent imports and exports derived from bilateral relationships, and not long trade routes that go from one country to another passing through others in the middle. Therefore, for this reason, I've decided not to consider the analysis of these metrics when looking at trade graphs.
+
+
+\subsection{Graph properties}
 Aside from looking at the node degrees one by one, one can also combine them to learn an important property of the graph as a whole, that is the \textit{average degree}. For an undirected network of size N the average degree is 
-\[ k_{avg} = \frac{1}{N}\sum_{i=1}^N k_i = \frac{2 L }{N} \]
-where $L = 1/2 \sum_{i=1}^N k_i$ is the total number of edges in the graph. If instead we consider a directed graph, we have that the average degree can be computed equivalently either using the in-degrees or the out-degrees
+\[
+    k_{avg} = \frac{1}{N}\sum_{i=1}^N k_i = \frac{2 L }{N} 
+\]
+where $L = 1/2 \sum_{i=1}^N k_i$ is the total number of edges in the graph. The average degree can take values between $0$ and $N-1$, and we have that $k_{avg} = N-1$ only in the case of a fully connected graph, that is a graph where every node is linked to any other node.
+If instead we consider a directed graph, we have that the average degree can be computed equivalently either using the in-degrees or the out-degrees
 \[
     k_{avg}^{in} = \frac{1}{N} \sum_{i=1}^N k_i^{in} = \frac{1}{N} \sum_{i=1}^N k_i^{out} = k_{avg}^{out}\,,
 \]
-since the total number of links $L$ is the same if we sum either measures, \textit{in} or \textit{out}.
-A second metric that we can compute for the whole network is the \textit{average clustering coefficient}, which represents the degree of clustering of the whole network:
+since the total number of links $L$ is the same if we sum either measures, \textit{in} or \textit{out}. This in fact is true since an outgoing edge from a node is an incoming edge for another.
+A second metric that we can compute for the over-all network is the \textit{average clustering coefficient}, which represents the degree of clustering of the whole network:
 \[
-    C_{avg} = \frac{1}{N} \sum_{i=1}^N C_i
+    C_{avg} = \frac{1}{N} \sum_{i=1}^N C_i \,;
 \]
+This aggregated metric gives us an idea of the level of interconnectedness of the graph as a whole, which emerges from the connectedness of the local clusters. 
+A closely related measure to the average clustering coefficient that can be computed on a graph to have an idea of how well it's connected is the \textit{density}: it is defined as the proportion of edges that are present in the graph over the total possible number of edges that could be formed. 
+For a directed graph, it is defined formally as
+\[
+    D = \frac{L}{2\binom{N}{2}} = \frac{L}{N(N-1)}
+\]
+where $L$ is the total number of edges in the graph, and $N$ is the total number of nodes. The density of a graph goes from 0, if there are no edges at all, to 1, if all possible edges are present, in which case we say that the graph is \textit{complete}. In real networks, the number of nodes $N$ and the number of edges $L$ can vary widely, but more often than not the network that we observe are \textit{sparse}, meaning that their density is low \cite{barabasi2016network}. This also means that the adjacency matrix is sparse, containing a lot of zeros. In fact, this is the case with the world trade network that we take under study: even the most central and connected nodes are not linked with the majority of the other countries.
 
-TODO: DENSITY
+
+\subsection{Degree distribution and power law}
+% TODO: power law uffa
+Given all the degrees of the nodes in the graph, we can also introduce the \textit{degree distribution} $p_k$ of the nodes, which is a discrete distribution indicating the probability that a randomly selected node has degree $k$. For a network of $N$ nodes, the degree distribution is the normalized histogram given by 
+\[ 
+    p_k = \frac{N_k}{N} 
+\]
+where $N_k$ is the number of nodes that have degree $k$. 
+The degree distribution is a characteristic of the network structure and can have different functional forms. For example, random networks have a binomial degree distribution, while regular networks, where all the nodes have the same degree, have a distribution concentrated at a single value (delta function at that degree) \cite{sajedianfard2021quantitative}. Observing the structure of the degree distribution can yield a lot of relevant information about a network, such as whether it displays behaviors of the \textit{small-world} phenomenon or the \textit{scale-free} property. A network is said to be a \textit{small-world} network if the mean shortest path distance between any pair of nodes is small relative to the total number of nodes in the network (usually, one wants this length to grow no faster than logarithmically as the number of nodes tends to infinity). \textit{Scale-free} networks instead have few highly connected nodes and many slightly connected nodes, with a \textit{power-law} degree distribution.
+While performing the analysis, it will be of interest to study each graph's degree distribution, to observe whether they express known behaviors. In particular, as \textcite{barabasi2016network} points out, many real networks like the world trade web that we are studying, are prone to have a power-law degree distribution, which is
+\[
+    p_k \sim k^{-\gamma} \text{ or equivalently } \log(p_k) \sim -\gamma \log(k) \,.
+\]
+The exponent \gamma is called \textit{degree exponent} and it indicates how much rapidly the probability decreases as $k$ increases. A power-law distribution over the degrees is characterized by a very high frequency of nodes with low degree and a low presence of nodes with considerably high degree. This is also called the \textit{scale-free} property and one can verify that a newtwork shows it by means of a log-log plot of the degree frequencies: if they can be approximated by a straight line (as in the above formulation), then we can say that they follow a power-law distribution.
+Another perspective that we can consider is to look at the weighted degrees, and to assume that they were generated by a distribution and then study this distribution and its properties. To do so, one can approximate the distribution via an histogram on the vector of weighted degrees (in or out) and then use the obtained histogram as an estimate of the "real" distribution, thus computing qualitative and quantitative properties. As for the unweighted version, we could again study whether the behavior of the histogram resembles a power law, where in our specific case it would mean that there are a lot of trade exchanges with low value, while a small number of the imports instead have very high amounts of traded goods. In the following chapter, we will perform both of these analyses, trying to fit a power law on the unweighted and weighted degree distributions.
+
+
 
 \pagebreak
 \section{Visualization of Trade Networks}
@@ -103,33 +141,31 @@ A final relevant information is conveyed by the size of the edges: since we use 
 Given all the reasons that are explained in this paragraph, it is easy to see that the kind of layouts using force-directed algorithms are much more informative than the ones on the geographical space. Hence, from here onward, all graphs will be plotted in this way.
 
 
-
-
 \pagebreak
 \section{PageRank Analysis}
+
 In the world trade network, most countries are characterized by weak trade links, but there exists a group of countries featuring a large number of strong relationships, which suggests a core-periphery structure \cite{fagiolo}, and this is particularly true of advanced countries \cite{deguchi}. As pointed out before, we can have an understanding of the network by looking at the centrality measures of its nodes (in- and out-degree) or of the entire graph (average degree, density). However, node degrees are computed using only local information, since for every node it is enough to know its neighbors. Let me introduce now a centrality measure that instead takes into account the relationships of the entire network and their effect on the node under consideration: the PageRank. 
 First introduced by \textcite{page1999pagerank}, this measure of centrality of a node derives from its network neighbors' and is proportional to their centrality divided by their out-degree. What this means is that nodes which point to many others give only a small amount of centrality on to each of those others, even if their own centrality is high. Hence, to compute a node's pagerank we need to know its neighbors' pagerank, and so on, showing the fact that the information for each single node comes from the whole graph. Intuitively, we can think of PageRank as a kind of "fluid" that circulates through the network, passing from node to node across edges following their direction, and accumulating at the nodes which are most important \cite{easley2012networks}. To be more precise, we compute PageRank ($pr$) in the following way:
 \begin{enumerate}
     \item Given a graph with $n$ nodes, we start by assigning to all nodes the same initial value for $pr$, set to $1/n$;
     \item Choose a number $k$ of iterations, and for $k$ steps repeat:\\
             Each node divides its current $pr$ equally across its out-going links, and passes these equal shares to the pages it points to. Each node updates its new $pr$ as the sum of the shares that it receives from the neighbors.
-    \item 
 \end{enumerate}
 One can prove that (except in certain degenerate cases) the PageRank values of all nodes converge to limiting values as the number of steps $k$ goes to infinity. To avoid cases in which the total available $pr$ in the network ends up in nodes that have no link that can give it back, we can introduce a \textit{scaled} version of the PageRank, whose formula is
 \begin{equation}\label{eq:pagerank}
-    pr_i = \alpha \sum_{j} a_{ij} \frac{pr_j}{d_j^{out}} + \beta
+    pr_i = \alpha \sum_{j} a_{ij} \frac{pr_j}{k_j^{out}} + \beta
 \end{equation}
 where $\alpha$ and $\beta$ are positive constants, $a_{ij}$ is an entry of the adjacency matrix and $pr_i$ and $pr_j$ are the PageRank values of nodes $i$ and $j$, respectively. 
 The economic significance of this centrality measure is that a country with high PageRank centrality is connected to a central country, which is also a country with high PageRank centrality. Central countries themselves have high PageRank centrality indicating that they are core sources in that specific market.
 An alternative way to define the PageRank of a graph is the eigenvector of the following Google matrix:
-\begin{equation}
-    g_{ij} = q \frac{a_{ij}{\sum a_{ij}}}} + (1-q)\frac{1}}{N}
+\begin{equation}\label{eq:googlemat}
+    g_{ij} = q \frac{a_{ij}}{\sum a_{ij}} + (1-q)\frac{1}{N}
 \end{equation}
-Here q = 0.85 is 
-
+Here $q = 0.85$ is a positive parameter introduced to ensure the existence of a unique solution. If we denote by $\mathbf{G}$ the Google matrix defined above, then we can obtain the vector of PageRank values $\mathbf{z} = (z_1,\dots,z_N)^T$ by repeating the following iteration until convergence:
+\begin{equation}
+    \mathbf{z(t+1) = G^T z(t)}
+\end{equation}
 In recent years, a major topic in network science research has been the investigation of the effects of ranking algorithms on the performance and behavior of networked systems. \textcite{ermann2011google} found that the page rank approach gives a ranking that is independent of the trade amount of a given country.
-
-
 PageRank centrality assigns high centrality values to those nodes which have a high number of incoming edges from other nodes with high centrality. In terms of countries and trade, a country has high PageRank if it imports trade from other countries with high PageRank. 
 In economic studies, the word "hub" is not strictly defined, but it is frequently used to indicate countries that have a high number of outgoing links with a large amount of trade, which means that they export great amounts of goods to others.
 
@@ -143,9 +179,14 @@ In the case of directed networks, we can also define a node's high centrality if
 \end{itemize}
 To put it simply, a node with a high authority value is pointed to by many other nodes with high hub values, and a node with a high hub value points to many nodes with high authority values. Note however that an authority may also be a hub and vice versa. In the context of the world trade network, we can interpret the two centrality measures differently, just by switching the perspective of the interpretation. Authorities are countries that receive a lot of imports, from many countries, and thus are dependent from them for that specific product. Contrary to what the name suggests, very often countries with high authority values are small countries that completely depend on imports from others for their demand of goods. Instead, hubs are countries that send a lot of exports, they are producers or manufacturers of goods and they export those goods to a high number of other countries.
 
+\section{Community detection}
+TODO: community detection
+
+\subsection{Louvain}
+TODO:
 
 \pagebreak
-\section{Stochastic Block Model}\label{sec:sbm}
+\subsection{Stochastic Block Model}\label{sec:sbm}
 Stochastic block models (SBM) are an increasingly popular class of model in the field of statistical analysis of graphs and networks. They can be used to discover or understand the latent structure of a network, as well as for clustering purposes. In our particular case, I will apply this method on the trade graphs to discover if any communities or clusters emerge and find an interpretation for them.
 I will proceed now to describe a formal version of the stochastic block model, together with the needed terminology. This part is adapted from \textcite{lee2019review}.\\
 Let us consider a graph $\mathcal{G} = (\mathcal{N},\mathcal{E})$, where $\mathcal{N}$ is the node set of size $n = |\mathcal{N}|$, and $\mathcal{E}$ is the edge set of size $M = |\mathcal{E}|$. Taking two nodes $p$ and $q$ from $\mathcal{N}$, we call a pair of nodes a \textit{dyad}, and the existence of an edge for the dyad $(p,q)$ is denoted by $\mathbf{Y}_{pq}$ which is an element of the $n \times n$ adjacency matrix $\mathbf{Y}$. If $\mathcal{G}$ is directed, as in our case, then the adjacency matrix is not symmetric and $\mathbf{Y}_{pq}$ is independent of $\mathbf{Y}_{qp}$ In the case of binary directed graphs, as in Section \ref{}, the adjacency matrix is a binary matrix, while in the case of weighted directed graphs, the matrix $Y$ can assume any value according to the weight of the edge.\\
@@ -178,3 +219,5 @@ When applying SBMs to real-world data, such as in our case, usually neither $\ma
 \end{equation}
 
 \subsection{Degree-Corrected SBM}
+TODO: DSBM
+

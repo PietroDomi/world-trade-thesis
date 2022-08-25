@@ -381,9 +381,9 @@ def calc_metrics(G,y="2021"):
              "clustering": nx.clustering(G),
              "page_rank": nx.pagerank(G),
              "hubs": hubs,
-             "authorities": authorities
-            # "betweenness_centrality":nx.betweenness_centrality(G), # SP not interesting
-            # "hubness": nx.closeness_centrality(G.to_undirected()) # SP not interesting
+             "authorities": authorities,
+             "betweenness_centrality":nx.betweenness_centrality(G), # SP not interesting
+             "hubness": nx.closeness_centrality(G.to_undirected()) # SP not interesting
         }
     
     metrics["vulnerability"] = vulnerability(metrics["in_degree_perc"])
