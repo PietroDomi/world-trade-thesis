@@ -385,6 +385,13 @@ def calc_metrics(G,y="2021"):
              "betweenness_centrality":nx.betweenness_centrality(G), # SP not interesting
              "hubness": nx.closeness_centrality(G.to_undirected()) # SP not interesting
         }
+
+    louvain_comm = nx.algorithms.community.louvain_communities(G, resolution=0.5)
+    louvain_dict = {}
+    for i, comm in enumerate(louvain_comm):
+        for c in comm:
+            louvain_dict[c] = i
+    metrics["louvain_community"] = louvain_dict
     
     metrics["vulnerability"] = vulnerability(metrics["in_degree_perc"])
 
