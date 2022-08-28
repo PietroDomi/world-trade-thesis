@@ -35,7 +35,7 @@ big_df_col = ["year","month","prod","country"] +  ['edges','nodes','size','degre
     'out_weight_abs',
     'in_weight_abs']
 
-big_df = pd.DataFrame(columns=big_df_col)
+big_df = pd.DataFrame()
 issues = []
 for y in tqdm([y for y in range(2001,2021)]):
     df = g.load_filtered_data("complete", save=True, force_reload=True, verbose=False, sorted=False, columns=g.full_columns, types=g.full_types, group_by_prod_code=True, n_digits=2,
@@ -46,7 +46,7 @@ for y in tqdm([y for y in range(2001,2021)]):
         t4g = g.extract_table_for_graph(df4g, y=str(y), flow="all", scale_by='population', pop_df=df_pop)
         if t4g.shape[0] < 10:
             issues.append((y,prod,t4g.shape[0]))
-        coord, metrics, G = g.makeGraph(t4g, tab_nodes=None, weight_flag=True, criterio="VALUE_IN_EUROS")
+        coord, metrics, G = g.makeGraph(t4g, tab_nodes=None, weight_flag=True, criterio="VALUE_IN_EUROS", compute_layout=False)
         nx.write_gexf(G,f"data-samples/graphs/complete/complete_y{y}_p{prod}.gexf")
         x = metrics.reset_index().to_dict()
         x["year"] = str(y)
@@ -55,7 +55,9 @@ for y in tqdm([y for y in range(2001,2021)]):
         big_df = pd.concat([big_df,pd.DataFrame(x,columns=big_df_col)],axis=0)
         metrics_full[f"{y}_cpa_{prod}"] = metrics
 
+version = 3
+
 with open("./data-samples/metrics/issues_complete.txt","w") as f:
     f.write(str(issues))
-pickle.dump(metrics_full,open("./data-samples/manual/metrics/metrics_complete_V_2.pickle","wb"))
-big_df.to_parquet("./data-samples/manual/metrics/metrics_complete_V_2.parquet")
+pickle.dump(metrics_full,open(f"./data-samples/manual/metrics/metrics_complete_V_{version}.pickle","wb"))
+big_df.to_parquet(f"./data-samples/manual/metrics/metrics_complete_V_{version}.parquet")

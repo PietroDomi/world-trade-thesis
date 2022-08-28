@@ -2,7 +2,7 @@ import hashlib, random, math, os, powerlaw
 import pandas as pd
 import numpy as np
 import networkx as nx
-from tqdm.notebook import tqdm
+from tqdm import tqdm
 import matplotlib.pyplot as plt
 
 full_columns = ['PRODUCT_CPA2_1', 'DECLARANT_ISO', 'PARTNER_ISO', 'FLOW', 'PERIOD', 'VALUE_IN_EUROS', 'QUANTITY_IN_KG']
@@ -345,7 +345,7 @@ def get_world_countries(df_pop, eu_iso, year=2020):
         nodes.append((k,{"pop":df_pop_dict[k],"eu":(k in eu_list)}))
     return nodes
 
-def calc_metrics(G,y="2021"): 
+def calc_metrics(G,y="2021",colab=False): 
 
     def vulnerability(in_deg):
         """Opposite of in-degree-percentage: (1-d)%
@@ -385,13 +385,13 @@ def calc_metrics(G,y="2021"):
              "betweenness_centrality":nx.betweenness_centrality(G), # SP not interesting
              "hubness": nx.closeness_centrality(G.to_undirected()) # SP not interesting
         }
-
-    louvain_comm = nx.algorithms.community.louvain_communities(G, resolution=0.5)
-    louvain_dict = {}
-    for i, comm in enumerate(louvain_comm):
-        for c in comm:
-            louvain_dict[c] = i
-    metrics["louvain_community"] = louvain_dict
+    if not colab:
+        louvain_comm = nx.algorithms.community.louvain_communities(G, resolution=0.5)
+        louvain_dict = {}
+        for i, comm in enumerate(louvain_comm):
+            for c in comm:
+                louvain_dict[c] = i
+        metrics["louvain_community"] = louvain_dict
     
     metrics["vulnerability"] = vulnerability(metrics["in_degree_perc"])
 
@@ -421,8 +421,8 @@ def calc_metrics(G,y="2021"):
     
     return pd.DataFrame(metrics)
 
-def makeGraph(tab_edges, tab_nodes=None, pos_ini=None, directed=True, weight_flag=False, weight_layout=False, criterio="VALUE_IN_EUROS", compute_metrics=True,
-            compute_layout=False, lay_dist=5, lay_it=1000, lay_tol=1e-4):
+def makeGraph(tab_edges, tab_nodes=None, pos_ini=None, directed=True, weight_flag=False, weight_layout=False, criterio="VALUE_IN_EUROS",
+            compute_metrics=True, compute_layout=False, lay_dist=5, lay_it=1000, lay_tol=1e-4, colab=False):
     
     G = nx.DiGraph() if directed else nx.Graph()
     if tab_nodes is not None:
@@ -449,7 +449,7 @@ def makeGraph(tab_edges, tab_nodes=None, pos_ini=None, directed=True, weight_fla
 
     # Calcolo le metriche
     if compute_metrics:
-        MetricG = calc_metrics(G, y=tab_edges.columns.name)
+        MetricG = calc_metrics(G, y=tab_edges.columns.name,colab=colab)
         MetricG = MetricG.merge(tab_edges.groupby(["country_from"])[criterio].sum().rename("out_weight_abs"),left_index=True,right_index=True,how="left")\
                         .merge(tab_edges.groupby(["country_to"])[criterio].sum().rename("in_weight_abs"),left_index=True,right_index=True,how="left").fillna(0)
         MetricG.index.name = "country"
