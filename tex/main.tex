@@ -24,6 +24,8 @@
     }
 \usepackage[font=footnotesize]{caption}
 \usepackage[dvipsnames]{xcolor}
+\usepackage{setspace}
+\doublespacing
 
 % Citations
 \usepackage[sorting=none, style=numeric, backend=biber]{biblatex}
@@ -56,13 +58,17 @@
 % Abstract
 % \end{abstract}
 
+% \singlespacing
+\begin{singlespace}
 
 \tableofcontents
 
 \listoftables
 \listoffigures
+\end{singlespace}
 \pagebreak
 
+% \doublespacing
 % Introduction chapter
 \input{tex/ch1intro}
 % Boh
@@ -74,10 +80,12 @@
 % Scenarios and insights
 \input{tex/ch5conclusions}
 
+\begin{singlespace}
 % \bibliographystyle{alpha}
 \printbibliography
 
 \appendix
 \input{tex/appendix}
+\end{singlespace}
 
 \end{document}
