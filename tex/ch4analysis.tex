@@ -1,36 +1,15 @@
 \chapter{Methods and Analysis chapter}
 
-% Take my thesis and copy the style, however, basically what you did and how you did it 
-% So 
-% \begin{itemize}
-%     \item Each method \& analysis has its section
-%     \item Draw some conclusions about this (here \textbf{technical} ones!)
-% \end{itemize}
+In the current chapter, I will explore the mathematical and statistical techniques that are behind my analysis of the world trade networks. In order to better understand the results that I will show in the next chapter, it is essential to have an understanding not only of the basic concepts of graph theory, but also of the mechanisms and dynamics of the statistical tools that I employ, from the simplest to the more elaborated. I will start by introducing what is a graph (Sec. \ref{sec:4graphtheory}), what are its properties, which metrics we can look at to study it and how we can visualize it to gain knowledge from the plots (Sec \ref{sec:4visualization}). Then I will continue by expanding more on the relevant techinques used for Network Analysis, by presenting the ideas of PageRank, hubs and authorities, and the methods to compute them (Sec. \ref{sec:4pagerank}). Lastly, I will talk about an additional query that one can do on a graph, that is community detection (Sec \ref{sec:4community}): I will explain two methods, Louvain and Stochastic Block Model, that allow one to look for possible communities in graphs, that is to say groups of nodes with similar behavior, like for example a limited group of countries that trades only among them. The following surveys of the statistical techniques I decided to use are adapted from \textcite{barabasi2016network,easley2012networks}.
 
-% CHAPTER SCHEMA
-% - what is a graph formally                DONE 
-% - visualization methods, layouts, not interesting geographically + global overview
-%     - how the force directed works
-% - centrality measures:
-%     - degree (abs/perc) (in/out) (weight/unw) 
-%         - (1-inw: vulnerability)
-%         - power law (degree/in/out)(unw/weight)
-%     - why not betweenness and closeness
-%     - density
-%     - clustering
-%     - page rank
-% - community measures:
-%     - sbm
-%     - louvain
-
-Adapted from \textcite{barabasi2016network,easley2012networks}.
-
-\section{Intro to Graph Theory}
+\section{Intro to Graph Theory}\label{sec:4graphtheory}
 
 If we want to understand a complex system, we first need to know how its components interact with each other or, in other words, we need a map of its wiring diagram.
 Let us start by defining formally what is a graph, since it is fundamental for the analysis that will be carried out. 
 A \textit{graph} is a way of specifying relationships among a collection of items. It consists of a set of objects, called \textit{nodes}, with certain pairs of these objects connected by links called \textit{edges}. If we denote by $\mathcal{N}$ the set of nodes, and $\mathcal{E}$ the set of edges, then they are sufficient to identify a graph 
-\[ \mathcal{G} = (\mathcal{N},\mathcal{E})\,. \]
+\[ 
+    \mathcal{G} = (\mathcal{N},\mathcal{E})\,. 
+\]
 We say that two nodes are \textit{neighbors} if they are connected by an edge. This representation of the network offers a common language to study systems that may differ greatly in nature or scope. The links of a graph can be \textit{directed} or \textit{undirected}: some systems have directed edged, such as the world trade of goods that we analyze in this research where a country imports from another country and the transit of goods has a clear direction, while other systems have undirected edges, like friendship relationships in a social community, where the connection between the entities is mutual (if I am your friend then you are my friend).
 
 A complete description of a graph requires us to keep track of its nodes and edges: this is often done using a so-called \textit{adjacency matrix}. The adjacency matrix $\mathbf{A}$ of a directed graph with $N$ nodes is a $N \times N$ matrix, where $A_{ij} = 1$ if there is an edge going from node $j$ to node $i$, while $A_{ij} = 0$ if there isn't. For an undirected network, the adjacency matrix has the property of being symmetric, i.e. $A_{ij} = A_{ji}$.
@@ -117,7 +96,7 @@ Another perspective that we can consider is to look at the weighted degrees, to 
 
 
 \pagebreak
-\section{Visualization of Trade Networks}
+\section{Trade Networks Visualization}\label{sec:4visualization}
 
 As it was previously shown in Section \ref{sec:ch3graphs} through the graph plots, a lot of insights and information can be gained through the visualization of the network. If we restrict our attention to the datasets and the tables, we can have an idea of the countries that play a major role in the global trade, and we receive the impression of the significance of the economic exchanges. However, we struggle to have a comprehensive view of the effects of these interactions on each other: for this reason, we make use of a graph which is able to capture and represent this type of intricate relationships. In order to convey meaningful information, we need to spend special attention to how we display a graph. Since we are dealing with countries and imports, the most natural way to represent a world graph would be to use the geographical information of each nation: we collocate each node on the coordinates of the centroid of that country, and then we add the links among the countries (as in Figure \ref{fig:geograph}).
 \begin{figure}
@@ -145,7 +124,7 @@ Given all the reasons that are explained in this paragraph, it is easy to see th
 
 
 \pagebreak
-\section{PageRank, Hubs and Authorities}
+\section{PageRank, Hubs and Authorities}\label{sec:4pagerank}
 
 In the world trade network, most countries are characterized by weak trade links, but there exists a group of advanced countries featuring a large number of strong relationships \cite{deguchi2014hubs}, which suggests a core-periphery structure \cite{fagiolo2010evolution}. As pointed out before, we can have an understanding of the network by looking at the centrality measures of its nodes (in- and out-degree) or of the entire graph (average degree, density). However, node degrees are computed using only local information, since for every node it is enough to know the connections with its neighbors. Let me introduce now a centrality measure that instead takes into account the relationships of the entire network and their effect on the node under consideration: the PageRank. 
 First introduced by \textcite{page1999pagerank}, this measure of centrality of a node is influenced by the same measure for the neighboring nodes, and it is proportional to their PageRank divided by their out-degree. What this means is that nodes which point to many others give only a small amount of centrality on to each of those others, even if their own centrality is high. Hence, to compute a node's PageRank we need to know its neighbors' PageRank, and so on, showing the fact that the information for each single node comes from the whole graph. Intuitively, we can think of PageRank as a kind of ``fluid" that circulates through the network, passing from node to node across edges following their direction, and accumulating at the nodes which are most important \cite{easley2012networks}. To be more precise, we compute PageRank ($pr$) in the following way:
@@ -191,7 +170,7 @@ where $c(t)$ and $d(t)$ are normalization factors to force the sums of all eleme
 \end{align*}
 The initial values of the iterations are $x_i = 1/N$ and $y_i = 1/N$ for all nodes $i$. What can be seen from Equation \ref{eq:hits} is that the HITS authority vector $\mathbf{x}$ is the eigenvector of the matrix $\mathbf{A^T A}$, while the HITS hub vector $\mathbf{y}$ is the eigenvector of $\mathbf{A A^T}$ \cite{deguchi2014hubs}.
 
-\section{Community detection}
+\section{Community detection}\label{sec:4community}
 A fundamental modern technique in the analysis of network data is the automatic discovery of communities, which are groups of nodes that are strongly connected or that share similar features or roles. However, community detection is a rich and challenging problem since there is no clear definition on what constitutes a community: usually, communities are defined as non-overlapping groups of nodes such that there are more edges within groups than between them, but this definition doesn't cover all cases and leaves space to many computationally approaches to detect them \cite{fortunato202220years}. In the next sections, I will overview two of the most common approaches: the \textit{Louvain method} and the \textit{Stochastic Block Model}. 
 The first approach is based on an optimization problem: we have a function that, given a division of the network in communities, returns a score such that a ``good" division gets a higher score, and our goal is to maximize it. The most common score is the quality function known as modularity, which explicitly favors divisions with many edges within groups.
 The second approach instead is based on statistical inference, where we assume that communities are not just a feature of the network structure, but a primary driver of it. Nodes are connected precisely because of the community they belong to, and not the other way around. The placement of edges is represented using a probabilistic model, in which the probability that two nodes are connected depends uniquely on the communities they belong to. A ``good" community structure is one who has a high probability of generating the observed network through the model, so that we can use this probability as a score function.
