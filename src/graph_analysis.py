@@ -385,13 +385,14 @@ def calc_metrics(G,y="2021",colab=False):
              "betweenness_centrality":nx.betweenness_centrality(G), # SP not interesting
              "hubness": nx.closeness_centrality(G.to_undirected()) # SP not interesting
         }
-    if not colab:
-        louvain_comm = nx.algorithms.community.louvain_communities(G, resolution=0.5)
-        louvain_dict = {}
-        for i, comm in enumerate(louvain_comm):
-            for c in comm:
-                louvain_dict[c] = i
-        metrics["louvain_community"] = louvain_dict
+    ## NOT WORKING
+    # if not colab:
+    #     louvain_comm = nx.algorithms.community.louvain_communities(G, resolution=0.5)
+    #     louvain_dict = {}
+    #     for i, comm in enumerate(louvain_comm):
+    #         for c in comm:
+    #             louvain_dict[c] = i
+    #     metrics["louvain_community"] = louvain_dict
     
     metrics["vulnerability"] = vulnerability(metrics["in_degree_perc"])
 
@@ -463,7 +464,7 @@ def makeGraph(tab_edges, tab_nodes=None, pos_ini=None, directed=True, weight_fla
                 y = random.uniform(0, 1000)
                 pos_ini[node] = np.array([x,y])
         coord = nx.spring_layout(G, weight=("weight" if weight_layout else None),
-                                 k=lay_dist/math.sqrt(G.order()), iterations=lay_it, threshold=lay_tol)
+                                 k=lay_dist/math.sqrt(G.order()), iterations=lay_it, threshold=lay_tol, seed=1234)
 
     return coord, MetricG, G
     
