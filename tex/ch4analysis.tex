@@ -2,14 +2,71 @@
 
 % TODO:
 % - intro
-% - Overview of the results in the categories
-% - Food Products
-% - Gas
+% - overview of the results in the categories
+% - two dimensions across time and across category
+% - divide in categories
+% - for each category analyze the graph, over time
+%     1) then we can look at the metrics averaged (over time)
+%         - TABLE + comment on table:
+%             - differences among categories on average 
+%             - page rank median
+%             - bar chart categories by degree?
+%     2) time series of some metric in some categories 
 
-The underlying idea of the overall research was to study methods of network theory with the goal of applying them to the constructed dataset of import/export exchanges among countries. The purpose of this chapter is to show the results obtained and comment on the metrics and visualization that have been produced. What was done, therefore, is to use the cleaned, normalized data from Chapter \ref{ch:2data} and perform an analysis using the approaches described in Chapter \ref{ch:3methods}.
+% -specific examples - Food & Gas: 
+%     1) graph metrics: 
+%         - over time
+%         - power law over time
+%     2) node properties:
+%         - compared on average tra i nodi
+%         - time series of relevant node's + pr
+%     3) communities:
+%         - grafico schschschschscsch (x2)
+%         - plot confronto sbm vs louv 
+%             --> fai vedere in cosa sono diversi (perchè le communities rappresentano cose diverse)
+%             --> confronto modularities
+%         - plot tanti^n plot
 
+
+The core idea of the overall research is to study methods of network theory with the goal of applying them to the constructed dataset of import/export exchanges among countries. The purpose of this chapter is to show the results obtained and comment on the metrics and visualization that have been produced. What was done, therefore, is to use the cleaned, normalized data from Chapter \ref{ch:2data} and perform an analysis using the approaches described in Chapter \ref{ch:3methods}.
+% Maybe insert some general features of the dataset, either here or on ch 2
+The dataset of trade exchanges provides us with two dimensions along which we can conduct the analysis. The first one is time: the reported imports and exports are aggregated annually, and therefore we have information about the state of the world trade network in a particular year, from 2001 until 2020. We can see how the graph evolved, how its metrics changed over time, and we can have a general understanding of the complex net of interactions among countries.
+The second dimension of interest are the product categories. In fact, thanks to the standardized nomenclature adopted by most countries, we can identify the relevant markets easily, and zoom in from the general view of the total exchanges to the structure of a specific group of products, in which perhaps some countries may emerge as more central, or we can spot more easily possible dependencies of one country from another. The way in which the nomenclature is constructed allows to possibly choose different levels of granularity of the data. As shown in Section \ref{sec:nomandusd}, the more comprehensive collections are indicated by a two-digit code, while moving to three or four-digit codes characterizes more specific sub-categories of products.
+
+What I have done is to divide the dataset according to the two-digit categories, construct a graph of each category in every available year, and then compute metrics and run algorithms to uncover patterns in the network structures.
+Let us have a look at Table \ref{tab:catmetrics}, in which I reported the main graph and node metrics for each category.
+
+\begin{table}
+    \input{tables/catmetrics.tex}
+    \caption{Category metrics}
+    \label{tab:catmetrics}
+\end{table}
+
+The table is obtained by taking the graphs of each category and averaging across years and nodes, since the number of countries under consideration is fixed in all situation, i.e. 237 territories.
+It is sorted according to the Average Sum of Weights, which is an indicator of the size of that trading market over the last 20 years. In fact, the first row is the total over all categories, which tells us that on average the world trade network is composed of 17575 edges among 237 countries, which corresponds to a density of 0.314. Even though it may not seem so, the world trade network is one of the densest social networks that can be observed, since what we see in other situations is that the vast majority of real world graphs are sparse \cite{barabasi2016network}. The interpretation of the Average Sum of Weights is that over the last 20 years, countries buy and sell in the global network of trade imports high amounts of money. In fact, the numbers that we see suggest that every year on average a total amount of more than 942 million euros per 1000 people is spent on imports. Seen over time, this metric serves as an indicator of the choice of countries to rely more or less on international trade rather than internal production.
+A second interesting metrics is the average degree, which represents the mean number of trade partners of each country for the specific categories. Altogether, countries have on average $148.3$ connections in the WTN, but what is more interesting is to look at these values in the categories, since they vary quite significantly. In fact, if we look at the trade network for "\textit{Electricity, gas, steam and air conditioning}"\footnote{
+    From the EU Economic Activity Classification:
+    "This section includes the activity of providing electric power, natural gas, steam, hot water and the like through a permanent infrastructure (network) of lines, mains and pipes. The dimension of the network is not decisive; also included are the distribution of electricity, gas, steam, hot water and the like in industrial parks or residential buildings.This section therefore includes the operation of electric and gas utilities, which generate, control and distribute electric power or gas."\cite{eurostat2022website}
+} we see that even though it ranks high according to average expenditure, it has a low Mean Degree of just $2.85$. What this means is that across time on average a country has circa only 3 partners with which it exchanges that good. This number is a reasonable interpretation of what happens in reality, where usually countries depend on a few others for their supply of electricity, which in the majority of cases are their neighboring ones. For such a local trade marked, we could show it using the geographical positions of the countries, as it is represented in Figure \ref{fig:elecgeo}. As we can see in the table, the number of edges here is very low, compared to the one of other categories, and in fact the graph is particularly sparse. A possible exception, however, could be the EU countries (in \textit{blue}), where there is a higher concentration of edges. If we were to zoom in the network, and consider only this sub-graph, we could obtain the plot which is in Figure \ref{fig:elecgeoeur}. What we observe here is the European net of exchanges, which usually differs in characteristics from other trade relationships one can find around the world. In fact, the European Union was born precisely as a commercial and trading union, to facilitate exchanges among member countries: nowadays, it represents a unique cluster of countries with behaviors and relationships that cannot be found anywhere else.
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{pics/full_y19_p35_force_79.png}
+    \caption[Trade network for \textit{Electricity, gas, steam and air conditioning} in 2019]{Trade network for \textit{Electricity, gas, steam and air conditioning} in 2019, with countries located according to their geographical position.}
+    \label{fig:elecgeo}
+\end{figure}
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{pics/full_y19_p35_force_82.png}
+    \caption[Trade network for \textit{Electricity, gas, steam and air conditioning} in 2019 among European countries only.]{Trade network for \textit{Electricity, gas, steam and air conditioning} in 2019 among European countries only, with countries located according to their geographical position.}
+    \label{fig:elecgeoeur}
+\end{figure}
+
+Apart from looking at average metrics of the categories over time, the intent of my research is also to apply a series of methods to any of these groups of products. What I will show in the following sections is a methodology to study such kind of networks and how to interpret the results. I chose two categories, that seemed relevant and interesting: the trade network of \textit{Food Products} (code 10) and \textit{Crude petroleum and natural gas} (code 06). 
+         
 
 \section{The Food Trade Network}
+Let us now have a look at 
+
 
 
 \section{The Gas and Energy Trade Network}
