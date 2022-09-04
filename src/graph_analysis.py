@@ -2,7 +2,7 @@ import hashlib, random, math, os, powerlaw
 import pandas as pd
 import numpy as np
 import networkx as nx
-from tqdm import tqdm
+from tqdm.notebook import tqdm
 import matplotlib.pyplot as plt
 
 full_columns = ['PRODUCT_CPA2_1', 'DECLARANT_ISO', 'PARTNER_ISO', 'FLOW', 'PERIOD', 'VALUE_IN_EUROS', 'QUANTITY_IN_KG']
@@ -423,7 +423,7 @@ def calc_metrics(G,y="2021",colab=False):
     return pd.DataFrame(metrics)
 
 def makeGraph(tab_edges, tab_nodes=None, pos_ini=None, directed=True, weight_flag=False, weight_layout=False, criterio="VALUE_IN_EUROS",
-            compute_metrics=True, compute_layout=False, lay_dist=5, lay_it=1000, lay_tol=1e-4, colab=False):
+            compute_metrics=True, compute_layout=False, lay_dist=5, lay_it=50, lay_tol=1e-4, colab=False):
     
     G = nx.DiGraph() if directed else nx.Graph()
     if tab_nodes is not None:
@@ -464,7 +464,7 @@ def makeGraph(tab_edges, tab_nodes=None, pos_ini=None, directed=True, weight_fla
                 y = random.uniform(0, 1000)
                 pos_ini[node] = np.array([x,y])
         coord = nx.spring_layout(G, weight=("weight" if weight_layout else None),
-                                 k=lay_dist/math.sqrt(G.order()), iterations=lay_it, threshold=lay_tol, seed=1234)
+                                 k=lay_dist/math.sqrt(G.order()), iterations=lay_it, threshold=lay_tol)
 
     return coord, MetricG, G
     
@@ -542,9 +542,12 @@ def plot_bar_metr(metrics_df,country="IT",metr="density",log=False):
         plt.title("Mean "+ metr +" across time")
     # plt.show()
     
-def plot_cat_ts(metrics_df, prod=None, metr="density", country="world", moving_avg=None, log=False):
+def plot_cat_ts(metrics_df, prod=None, metr="density", country="world", moving_avg=None, log=False, month=False):
     df = node_metrics_ts(metrics_df,node=country,prod=prod)
-    df["date"] = df.year + df.month
+    if month:
+        df["date"] = df.year + df.month
+    else:
+        df["date"] = df.year
     df.set_index("date",inplace=True)
     title = metr + " of " + country + " for " + get_cat_name("full",prod) + " from 2001 to 2021"
     if moving_avg is None:
