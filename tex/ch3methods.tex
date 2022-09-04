@@ -44,9 +44,9 @@ In weighted networks, we can also have a different type of degree centrality, th
 As for the unweighted version, by summing over the rows or the columns of the weighted network matrix $\mathbf{W}$ one can obtain the \textit{weighted in-degree} and \textit{weighted out-degree}, respectively.
 
 Aside from degree centrality measures, one can also investigate for each node how its neighborhood behaves, especially in terms of connectivity among the nodes in it. We can then define another centrality metric called \textit{clustering coefficient}: it represents the extent to which the neighbors of a given node are linked to each other, or in other words, the tendency of a network to form tightly connected neighborhoods. For a node $i$ with degree $k_i$ the local clustering coefficient is
-\[
+\begin{equation}\label{eq:clustering}
     C_i = \frac{2 L_i}{k_i(k_i-1)}
-\]
+\end{equation}
 where $L_i$ is the number of edges among the $k_i$ neighbors of node $i$. The clustering coefficient measures the graph's local edge density: in fact, the more interconnected the neighborhood of node $i$ is, the higher the coefficient. The clustering coefficient is useful in characterizing whether a graph presents features of the \textit{small-world} phenomenon. A network is said to be a \textit{small-world} network if the mean shortest path distance (which is defined right after this) between any pair of nodes is small relative to the total number of nodes in the network (usually, one wants this length to grow no faster than logarithmically as the number of nodes tends to infinity).\\
 There are many other centrality measures that are commonly used when studying graphs, especially regarding the notion of path. In a graph, a \textit{path} is a sequence of nodes and edges that start from a given node $i$ and arrive at node $j$. Provided that such path exists, one could also find the \textit{shortest path} between two nodes (the one with fewer edges) among the set of possible paths that connect them. Around the notion of shortest path, we could construct two additional metrics, that are \cite{benedictis2014bacicepii}:
 \begin{itemize}
