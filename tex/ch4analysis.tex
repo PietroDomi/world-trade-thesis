@@ -72,31 +72,53 @@ Apart from looking at average metrics of the categories over time, the intent of
 
 % - Food network abbastanza interessante perchè aveva size grossa, facilmente interpretabile
 The market of \textit{Food Products} is particularly interesting since it is one of the biggest in terms of amount of money spent, and also its relationships may be easier to interpret. Global food trade is of crucial importance for countries since it guarantees food security and availability. Focusing on this category, it is possible to look at the graph metrics and how they evolve over time, which gives us a first impression of the dynamics of this network. In Figure \ref{fig:foodmetrics}, four metrics are shown as time series, displaying trends and variations due to the latest historical events. The chosen metrics are size (sum of the weights), average degree, median page rank and average clustering coefficient.
+In the upper left box, we can easily spot the effects of the 2008 financial crisis and the COVID crisis on the size of the graph. 
+% From one year to the next, the amount of trade dropped by more than 10 million euros (per 1000 p.), and it even halved in 2020 with respect to 2019. 
+Regarding 2020, we can see in the two plots on the right the effect of closing the borders to contain the pandemic: the average degree had a huge drop since countries truncated or reduced a significant number of exchanges. The steep increase in clustering instead can be attributed to it being inversely correlated with the average degree: when a node has fewer neighbors the denominator of Equation \ref{eq:clustering} decreases, and so the clustering coefficient goes up, even though the network as a whole may be less connected.
+Lastly, in the bottom right plot we see the median page rank among nodes, and we can observe that it used to have a positive trend until 2013, but since then it had started to go down, even more so during COVID. This could be a signal of the market going from a slightly more centralized structure to having more producers and exporters.
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{tex/pics/full_p10_metric_ts.png}
+    \includegraphics[width=\textwidth]{pics/full_p10_metric_ts.png}
     \caption{Food Metrics}
     \label{fig:foodmetrics}
 \end{figure}
 
-In the upper left box, we can easily spot the effects of the 2008 financial crisis and the COVID crisis on the size of the graph. 
-% From one year to the next, the amount of trade dropped by more than 10 million euros (per 1000 p.), and it even halved in 2020 with respect to 2019. 
-Regarding 2020, we can see in the two plots on the right the effect of closing the borders to contain the pandemic: the average degree had a huge drop since countries truncated or reduced a significant number of exchanges. The steep increase in clustering instead can be attributed to it being inversely correlated with the average degree: when a node has fewer neighbors the denominator of Equation \ref{eq:clustering} decreases, and so the clustering coefficient goes up, even though the network as a whole may be less connected. 
-Lastly, in the bottom right plot we see the median page rank among nodes, and we can observe that it used to have a positive trend until 2013, but since then it had started to go down, even more so during COVID. This could be a signal of the market going from a slightly more centralized structure to having more producers and exporters.
-
-\begin{table}
-    \centering
-    \input{tables/foodmetrics}
-    \caption{Food Products Metrics}
-    \label{tab:foodmetrics}
-\end{table}
 
 \paragraph{Degree distribution}
 
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{pics/ts_p10.png}
+    \caption{Power law exponents over time of degree distribution of: in degree, out degree, in weighted degree, out weighted degree.}
+    \label{fig:fooddegree}
+\end{figure}
 
 
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{pics/powerlaw_in_degree_p10_y2014.png}
+    \caption{Food Products degree distribution of the in degree, with power law fit.}
+    \label{fig:plfood}
+\end{figure}
 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{pics/powerlaw_in_weight_degree_p10_y2014.png}
+    \caption{Food Products degree distribution of the in weighted degree, with power law fit.}
+    \label{fig:plfoodw}
+\end{figure}
+
+% - pl nel tempo
+% - two strange pl plottati
+% 	GAS 2006, in_degree + w
+% 	FOOD 2014, in_degree + w
+% - network plot
+% - nodi fighi
+% - ts delle metriche del nodo (pr, degree, weight degree, h/a)
+% - plot communities chschshchs (sbm & louv) -> chose year
+% - plot network (sbm & louv)
 
 
 %     1) graph metrics: 
