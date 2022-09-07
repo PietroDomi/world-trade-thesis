@@ -2,11 +2,13 @@
 % \usepackage[english]{babel}
 
 % Set page size and margins
-\usepackage[a4paper,top=2cm,bottom=2cm,left=2.5cm,right=2.5cm,marginparwidth=1.75cm]{geometry}
+% \usepackage[a4paper,top=2cm,bottom=2cm,left=2.5cm,right=2.5cm,marginparwidth=1.75cm]{geometry}
+\usepackage[inner=2.5cm, outer=2.5cm, bottom=4cm, top=3cm]{geometry}
 
 % Useful packages
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
+\graphicspath{{pics/}}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{hyperref}
@@ -23,9 +25,10 @@
     pdfpagemode=FullScreen,
     }
 \usepackage[font=footnotesize]{caption}
+\usepackage[font=footnotesize]{subcaption}
 \usepackage[dvipsnames]{xcolor}
-\usepackage{setspace}
-\doublespacing
+\usepackage[doublespacing]{setspace}
+\usepackage[capitalize,sort,compress]{cleveref}
 
 % Citations
 \usepackage[sorting=none, style=numeric, backend=biber]{biblatex}

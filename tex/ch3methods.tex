@@ -80,7 +80,7 @@ For a directed graph, it is defined formally as
 where $L$ is the total number of edges in the graph, and $N$ is the total number of nodes. The density of a graph goes from 0, if there are no edges at all, to 1, if all possible edges are present, in which case we say that the graph is \textit{complete}. In real networks, the number of nodes $N$ and the number of edges $L$ can vary widely, but more often than not the network that we observe are \textit{sparse}, meaning that their density is low \cite{barabasi2016network}. This also means that the adjacency matrix is sparse, containing a lot of zeros. In fact, this is the case with the world trade network that we take under study: even the most central and connected nodes are not linked with the majority of the other countries.
 
 
-\subsection{Degree distribution and power law}
+\subsection{Degree distribution and power law}\label{sec:4powerlaw}
 Given all the degrees of the nodes in the graph, we can also introduce the \textit{degree distribution} $p_k$ of the nodes, which is a discrete distribution indicating the probability that a randomly selected node has degree $k$. For a network of $N$ nodes, the degree distribution is the normalized histogram given by 
 \[ 
     p_k = \frac{N_k}{N} 
@@ -180,16 +180,16 @@ These are the two approaches for community detection that I will apply to the wo
 
 The Louvain Community Detection algorithm, or Louvain method, is a simple optimization method to extract the community structure of a network. It is a heuristic method whose goal is to maximize the \textit{modularity} function. The modularity of a network is a measure of the structure of the graph, which quantifies the strength of the division of the nodes into modules (i.e. communities). In general, networks with high modularity have dense connections between the nodes within a community but sparse connections between nodes in different communities.
 For weighted directed networks, the formulation of modularity is 
-\[
+\begin{equation}\label{eq:3modularity}
     Q = \frac{1}{m} \sum_{ij} \left[ W_{ij} - \frac{k_i^{in}k_j^{out}}{m} \right] \delta(c_i,c_j)
-\]
+\end{equation}
 where $W_{ij}$ is the weight of the edge $(i,j)$, $k^{in}$ and $k^{out}$
 are the in-degree and out-degree of nodes, $c_i$ indicates the community of node i and the $\delta$-function $\delta(c_i,c_j)$ is equal to 1 if $c_i=c_j$ or $0$ otherwise \cite{leicht2008community}.
 Therefore, we use Louvain algorithm to find the configuration of communities that maximizes modularity. Starting from a weighted directed network of $N$ nodes, the method works in two phases. 
 In the first phase, we start by assigning a different community to each node of the graph, thus starting with as many communities as nodes. Then for each node $i$ we consider the neighbors $j$ of $i$ and we evaluate the gain in modularity that would take place by removing $i$ from its community and adding it to the community of $j$. Then, node $i$ is placed in the community such that we have the greatest positive gain possible in modularity, otherwise $i$ stays in the original community if there is no improvement \cite{blondel2008louvain}. We can directly compute the modularity gain $\Delta Q$ obtained by moving an isolated node \(i\) into a community \(C\) as
-\[
+\begin{equation}\label{eq:3deltamod}
     \Delta Q = \frac{k_{i,in}}{m} - \gamma\frac{k_i^{out} \cdot\Sigma_{tot}^{in} + k_i^{in} \cdot \Sigma_{tot}^{out}}{m^2}
-\]
+\end{equation}
 where \(k_i^{out}\), \(k_i^{in}\) are the outer and inner weighted degrees of node \(i\) and \(\Sigma_{tot}^{in}\), \(\Sigma_{tot}^{out}\) are the sum of in-going and out-going links incident to nodes in \(C\).
 The parameter $\gamma$ is called \textit{resolution}, and its function is to assign a preference to larger (when $\gamma < 1$) or smaller (when $\gamma > 1$) communities \cite{hagberg2008networkx}.
 This process is repeated sequentially for all nodes until we have no more improvement available and the first phase is complete.
@@ -247,3 +247,23 @@ Equation \ref{eq:dcsbm} is what is called the Degree-Corrected (DC) SBM. We can 
 % \end{equation}
 What \textcite{karrer2011dcsbm} argue in their paper for DCSBM is that the simple block model doesn't work well in many applications to real world networks, and in particular, it is not flexible enough to generate graphs with structure similar to that found in empirical data. This means that community detection, seen here as \textit{a posteriori} fit of the model to the data, gives poor results, since in fact in the original SBM the expected degree is the same for all nodes in each group. The simple variation that they introduce is to include heterogeneity in the degrees of vertices, and they show that in this way they are able to improve the performance of the models for statistical inference of group structure.
 
+% greed SBM
+
+% \pi \sim Dirichlet(\alpha)
+
+% Z_i \sim \mathcal{M}(1,\pi)
+
+% \theta_{kl} \sim Beta(a_0,b_0)
+
+% X_{ij}|Z_{ik}Z_{jl}=1 \sim \mathcal{B}(\theta_{kl})
+
+% greed DCSBM
+% \pi \sim Dirichlet(\alpha)
+
+% Z_i \sim \mathcal{M}(1,\pi)
+
+% \theta_{kl} \sim Exponential(p)
+
+% \gamma_i^+,\gamma_i^- \sim \mathcal{U}(S_k)
+
+% X_{ij}|Z_{ik}Z_{jl}=1 \sim \mathcal{P}(\gamma_i^+\theta_{kl}\gamma_j^-)
