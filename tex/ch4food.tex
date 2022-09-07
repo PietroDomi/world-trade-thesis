@@ -16,7 +16,7 @@ Lastly, in the bottom right plot we see the median page rank among nodes, and we
     \label{fig:foodmetrics}
 \end{figure}
 
-\subsubsection*{Degree distribution}
+\subsection{Degree distribution}
 
 Moving on with the analysis of the trade networks of the Food Products category, one can study the properties of the degree distribution of the graphs over time. As mentioned in Section \ref{sec:4powerlaw}, we can try to verify whether the networks show features of the scale-free property, that is whether there are just a few countries with a high number of trade flows. The procedure to check this is to fit a power law distribution $\alpha k^{-\gamma}$ on the degree distribution (or equivalently fit a simple linear regression on the log-log plot of the distribution) and check how well it fits. I have reported the results in Figure \ref{fig:fooddegree}. The four plots correspond to the four types of degree distribution that I can construct on a directed weighted graph, using in/out, weighted/unweighted degree. In each of these plots, it is reported in blue the power law exponent $\gamma$ for each year in my dataset, and in orange the Mean Absolute Percentage Error\footnote{
     $\text{MAPE}(y, \hat{y}) = \frac{1}{n_{\text{samples}}} \sum_{i=0}^{n_{\text{samples}}-1} \frac{{}\left| y_i - \hat{y}_i \right|}{\max(\epsilon, \left| y_i \right|)}$
@@ -44,7 +44,7 @@ It is quite evident from these pictures that the distribution for the unweighted
     \label{fig:plfoodw}
 \end{figure}
 
-\subsubsection*{Network plot and node properties}
+\subsection{Network plot and node properties}
 
 Let us also show the actual network in 2010 with nodes and edges, using the force-directed algorithm. The plot is shown in Figure \ref{fig:foodnetwork}. The first thing we notice here, thanks to the spring layout, is that the graph has a core-periphery structure. Most of the major economies are at the center of the graph, that is to say, they are the countries which are the top exporters of \textit{Food Products} to other nodes. We can identify them by considering the node size in the picture, which is proportional to the out weighted degree: a node is bigger if the corresponding country exports many goods of this category. At the center we find for example the European countries, which have a dense web of imports (the \textit{orange} exchanges) among themselves, and also a considerable number of exports to the peripheral countries (the \textit{pink} edges). Hence, the layout helps us identify which are the most central countries before looking at metrics: in the \textit{core} of the network we see nodes such as the Netherlands (NL), the United States (US), Germany (DE), Brazil (BR), France (FR), which have a high \textit{out degree}, with a high number of connections with peripheral nodes. If instead we were to look from the perspective of importing countries, we could identify which are the links of strongest dependence, intended here as the ones with the highest weight. These are shown in Table \ref{tab:top10foodimp}. In the top half, among the strongest dependencies, we find the exports from Denmark (DK) to Greenland (GL), from the United Kingdom (GB) to Falkland Island (FK) and from Spain (ES) to Andorra (AD). These are just few examples of territories politically linked to the primary country, and thus historically depending on it for the economy. The strongest incoming links for Italy (IT), instead, are reported in the bottom half of the table. We can observe that most of the countries that export the most \textit{Food Products} to IT are EU countries, and also that for this specific category the level of dependence is not as high as that of the ones in the top half of the table.
 
@@ -73,7 +73,7 @@ Let's consider now a specific country and have a look in detail at its position 
 \end{figure}
 
 % \pagebreak
-\subsubsection*{Community detection}
+\subsection{Community detection}
 
 An alternative approach to study such trade networks is to understand their block structure. In recent years, this has been a hot topic in the research of network theory applied to real-life graphs. It was stated in previous chapters that the majority of these networks appear to have a \textit{core-periphery} structure, without however supporting the claim with any evidence. In this section, I will apply the methods of Degree Corrected Stochastic Block Model and Louvain Algorithm to the trade network of \textit{Food Products}. Analyzing the outputs of such algorithms can help us better understand the relationships among countries in this sector, and also verify whether the obtained clusters of countries support the idea of a core-periphery network. The two methods I used need to be fed slightly different networks: while for Louvain an extension of the modularity metric for weighted connections exists, for SBM and DCSBM I had to use a binary network, and hence I followed the procedure explained in Section \ref{sec:3binarygraphs}. I have run both algorithms on each available year of the \textit{Food Products} trade network, with the following parameter settings:
 \begin{itemize}

@@ -48,7 +48,7 @@ In Figure \ref{fig:gasmetrics} we see the time series of the network's \textit{s
     \label{fig:gasmetrics}
 \end{figure}
 
-\subsubsection*{Degree distribution}
+\subsection{Degree distribution}
 
 A secondary query we might try to find an answer to is whether in this trade sector the networks display signs of the \textit{scale-free} property. Hence, we look at Figure \ref{fig:gasdegree}, representing the power law fit over time. Considering the orange lines, indicating the fit of the linear regression in the log-log plot of the degree distribution, which is measured with MAPE, we see that the two weighted metrics are consistently a better fit than the unweighted version. Regarding the values of the \textit{gamma} exponent of the power law, it is similar in all four distributions, oscillating between the values of $0.8$ and $1$. Let us have a look at a specific year, to see whether it is indeed the case of a good power law fit.
 
@@ -85,7 +85,7 @@ Let us have a look now in the next paragraph at the network plot for the trade o
 \end{figure}
 
 
-\subsubsection*{Network plot and node properties}
+\subsection{Network plot and node properties}
 
 The plot in Figure \ref{fig:gasnetwork} of the petroleum and gas network is represented with the force-directed layout, which permits us to comment on the position of countries in the network. Indeed, we find positioned in the middle of the graph, countries which are the major global players in this market, and they are linked through a dense web of exchanges with other countries: they are Russia (RU), Saudi Arabia (SA), Arab Emirates (AE), Qatar (QA) and Norway (NO). The size of the node itself indicates the total output, and as it was mentioned above, Russia is by far the biggest in terms of normalized output. From there, a lot of thick edges (indicating heavier links) origin and go towards EU countries (\textit{pink} edges) or non-EU (\textit{azure} edges). A notable difference with the network of \textit{Food Products} is that in this case, many EU countries (indicated in \textit{blue}) become peripheral countries, which only receive imports of gas and don't produce any for export. There are a few EU countries in the middle which often act as redistributors, such as the Netherlands (NL), France (FR) and the United Kingdom (GB): they receive imports from other central countries and then export part of it to their neighboring ones. An additional characteristic that we can notice in the plot is a thick web of azure exchanges in the lower part of the network, surrounding the countries of SA, QA, AE. This represents the trade of petroleum and gas which originates from Middle East countries, and the receiving ends of those edges are countries which depend on such producers: in particular, among the highest importers of these good there are the United States (US), Japan (JP) and China (CN), all of which have an \textit{in degree} of more than 30 (in the case of China it is 53, which the highest among world countries).
 
@@ -119,7 +119,7 @@ Given the central role that has Russia in this particular market, let us have a 
 \end{figure}
 
 
-\subsubsection*{Community detection}
+\subsection{Community detection}
 
 As it was done for the previous category, we can explore the outcomes of the algorithms for community detection (DCSBM and Louvain), in order to search for clusters of countries trading intensely or to see whether these present evidences of a core-periphery structure. Let us start by looking at the parallel categories plot of \cref{fig:commgas}. In this market sector, the Degree Corrected SBM has identified three communities in 2019 (\cref{fig:dcgas}), one of which, the yellow one (3), seems to have been defined since the first years. At the same time, also the output of the Louvain method (\cref{fig:lougas}) in 2019 is composed of three main communities, with two small additional ones. Given this results, it is of interest to understand whether the two algorithms have returned similar block memberships, that is to say whether the communities refer to the same set of nodes. The communities are plotted in \cref{fig:gascommunities}, once for each method. If we consider the first figure, we start by noticing that Russia (RU) has a different color than the Middle Eastern competitor countries, which instead belong to the green community. Therefore, we can conclude that the cluster of countries in purple (1) is made of those countries which have strong import partnerships with Russia (including Italy), while the cluster in green (2) comprises nodes which trade considerably with Saudi Arabia (SA), Arab Emirates (AE), Qatar (QA) and others. A similar community structure can be found in the second plot, from the Louvain method: here the cluster of nodes orbiting Russia is in green (3), while the Middle Eastern block is in blue (2). However, a relevant difference with DCSBM that we can observe here is the following: while in the previous plot the third community includes those nodes which are at the periphery of the network and don't have a relevant role in this trade market, in the second plot we see the third community at the center of the network, made of nodes such as the United States (US), Norway (NO), Canada (CA), the Netherlands (NL) and the United Kingdom (GB).
 
@@ -127,13 +127,13 @@ As it was done for the previous category, we can explore the outcomes of the alg
     \centering
     \begin{subfigure}{\textwidth}
         \centering
-        \includegraphics[width=0.8\textwidth]{pics/dc_p06.png}
+        \includegraphics[width=\textwidth]{pics/dc_p06.png}
         \caption{Degree Corrected SBM}
         \label{fig:dcgas}
     \end{subfigure}
     \begin{subfigure}{\textwidth}
         \centering
-        \includegraphics[width=0.8\textwidth]{pics/lou_p06.png}
+        \includegraphics[width=\textwidth]{pics/lou_p06.png}
         \caption{Louvain Method}
         \label{fig:lougas}
     \end{subfigure}
